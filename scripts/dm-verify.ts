@@ -305,5 +305,5 @@ const body = Object.entries(expected)
   })
   .join("\n");
 const file = `${banner}\nexport const DM_EXPECTED: Record<string, { columns?: string[]; rows?: unknown[][]; options?: string[]; answer?: number }> = {\n${body}\n};\n`;
-writeFileSync("/home/z/my-project/src/lib/leetcode/content/dm-expected.ts", file);
+writeFileSync("src/lib/leetcode/content/dm-expected.ts", file);
 console.log(`\ndm-expected.ts written (${Object.keys(expected).length} keys) — ALL VERIFIED`);

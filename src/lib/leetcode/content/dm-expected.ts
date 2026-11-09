@@ -3405,4 +3405,484 @@ export const DM_EXPECTED: Record<string, { columns?: string[]; rows?: unknown[][
   "energy-grid-ops:c:c59:2": { columns: ["period","period_billed","running_billed"], rows: [["2026-04",8550758,8550758],["2026-05",8212786,16763544],["2026-06",8020206,24783750]] },
   "energy-grid-ops:c:c60:1": { columns: ["ledger_billed","whale_share","momentary_incl","on_line_count","forgotten_outage","king_affected"], rows: [[24783750,58.1,7,2,44,62000]] },
   "energy-grid-ops:c:c60:2": { columns: ["storm_ex_king","equipment_total","flip_leader","cre_intensity"], rows: [[33184,49157,"equipment",82.64]] },
+  "defi-amm:q:q01": { columns: ["active_pools"], rows: [[9]] },
+  "defi-amm:q:q02": { columns: ["protocol_id","name","chain","tvl_cents"], rows: [[2,"Aave V3","Ethereum",6200000000],[4,"MakerDAO","Ethereum",5400000000],[1,"Uniswap V3","Ethereum",4850000000],[3,"Curve Finance","Ethereum",2150000000],[5,"Nexus AMM","Arbitrum",850000000],[6,"HyperLiquid DEX","Optimism",420000000]] },
+  "defi-amm:q:q03": { columns: ["pair"], rows: [["3pool-01"],["ARB/USDC-05"],["ETH/USDC-05"],["ETH/USDT-05"],["LDO/ETH-30"],["OP/USDC-30"],["PEPE/WETH-100"],["SOL/USDC-30"],["WBTC/ETH-30"],["crvUSD/USDT-01"]] },
+  "defi-amm:q:q04": { columns: ["mev_swaps"], rows: [[6]] },
+  "defi-amm:q:q05": { columns: ["pair","price_cents","deviation_bps"], rows: [["BTC/USD",6850000,12],["ETH/USD",345000,15],["SOL/USD",14500,28],["LINK/USD",1850,20],["ARB/USD",115,45],["PEPE/USD",1,150]] },
+  "defi-amm:q:q06": { columns: ["total_fees_cents"], rows: [[969750]] },
+  "defi-amm:q:q07": { columns: ["total_principal_cents"], rows: [[26620000000]] },
+  "defi-amm:q:q08": { columns: ["total_bonuses_cents"], rows: [[71700000]] },
+  "defi-amm:q:q09": { columns: ["pair","fee_tier_bps","status"], rows: [["PEPE/WETH-100",100,"active"],["LDO/ETH-30",30,"paused"],["OP/USDC-30",30,"active"],["SOL/USDC-30",30,"active"],["WBTC/ETH-30",30,"active"]] },
+  "defi-amm:q:q10": { columns: ["active_positions"], rows: [[14]] },
+  "defi-amm:q:q11": { columns: ["loan_id","protocol_id","borrower","principal_cents"], rows: [[2,4,"0xMevSearcher",1800000000],[7,4,"0xWhaleArb",4500000000]] },
+  "defi-amm:q:q12": { columns: ["chain"], rows: [["Arbitrum"],["Ethereum"],["Optimism"]] },
+  "defi-amm:q:q13": { columns: ["large_swaps"], rows: [[6]] },
+  "defi-amm:q:q14": { columns: ["pair","heartbeat_sec"], rows: [["BTC/USD",3600],["ETH/USD",3600],["LINK/USD",3600],["SOL/USD",3600]] },
+  "defi-amm:q:q15": { columns: ["collateral_asset","total_seized"], rows: [["WBTC",550000000],["WETH",450000000],["ETH",252000000],["SOL",85000000],["LINK",55000000],["ARB",42000000]] },
+  "defi-amm:q:q16": { columns: ["unique_borrowers"], rows: [[6]] },
+  "defi-amm:q:q17": { columns: ["pool_id","pair","total_reserves_cents"], rows: [[1,"ETH/USDC-05",2500000000],[4,"3pool-01",1900000000],[2,"WBTC/ETH-30",1700000000],[9,"crvUSD/USDT-01",820000000],[5,"ARB/USDC-05",680000000],[6,"SOL/USDC-30",560000000],[7,"ETH/USDT-05",380000000],[3,"PEPE/WETH-100",240000000],[8,"LDO/ETH-30",220000000],[10,"OP/USDC-30",190000000]] },
+  "defi-amm:q:q18": { columns: ["arb_loans"], rows: [[9]] },
+  "defi-amm:q:q19": { columns: ["pool1_swaps"], rows: [[8]] },
+  "defi-amm:q:q20": { columns: ["eth_liquidations"], rows: [[8]] },
+  "defi-amm:q:q21": { columns: ["pool_id","swap_count","total_volume_cents"], rows: [[2,5,242600000],[4,4,239000000],[1,8,191500000],[5,4,56000000],[9,2,50000000],[6,3,19700000],[7,2,12400000],[3,2,2400000]] },
+  "defi-amm:q:q22": { columns: ["name","chain","volume","fees"], rows: [["Aave V3","Ethereum",19250000000,9625000],["Nexus AMM","Arbitrum",1070000000,535000],["MakerDAO","Ethereum",6300000000,0]] },
+  "defi-amm:q:q23": { columns: ["is_mev","count","total_in","avg_slippage"], rows: [[0,24,417600000,17.4],[1,6,396000000,17.5]] },
+  "defi-amm:q:q24": { columns: ["position_id","owner","fees_earned_cents","impermanent_loss_cents","net_profit_cents"], rows: [[3,"0xLP_Gamma",1420000,890000,530000],[5,"0xLP_Delta",890000,450000,440000],[2,"0xLP_Beta",680000,310000,370000],[1,"0xLP_Alpha",425000,85000,340000],[4,"0xLP_Alpha",510000,240000,270000],[16,"0xLP_Lambda",340000,185000,155000],[11,"0xLP_Theta",245000,110000,135000],[9,"0xLP_Zeta",210000,78000,132000],[10,"0xLP_Eta",195000,64000,131000],[7,"0xLP_Stable",120000,1500,118500],[12,"0xLP_Alpha",160000,55000,105000],[8,"0xLP_Beta",85000,2200,82800],[13,"0xLP_Stable",62000,800,61200],[18,"0xLP_Nu",92000,38000,54000]] },
+  "defi-amm:q:q25": { columns: ["liquidation_id","borrower","debt_asset","debt_to_collateral_pct"], rows: [[8,"0xBadDebt2","USDC",90.91],[2,"0xOverleveraged","USDT",90.83],[4,"0xDeFiDeg","USDC",90.59],[6,"0xRiskTaker","DAI",90.53],[1,"0xBadDebt1","USDC",90.48],[5,"0xArbFarmer","USDC",90.48],[7,"0xCDP_User9","DAI",90.32],[9,"0xOverleveraged","USDC",90.32],[10,"0xPerpTrader","USDC",90.22],[3,"0xVault404","DAI",88.75]] },
+  "defi-amm:q:q26": { columns: ["sender","tx_count","total_sent"], rows: [["0xArbBot99",2,180000000],["0xMevSearcher",2,136000000],["0xWhale1",1,120000000],["0xBob",2,56000000],["0xTreasury",1,50000000]] },
+  "defi-amm:q:q27": { columns: ["pair","price_cents","deviation_bps","heartbeat_sec"], rows: [["PEPE/USD",1,150,86400],["ARB/USD",115,45,86400],["SOL/USD",14500,28,3600],["LINK/USD",1850,20,3600]] },
+  "defi-amm:q:q28": { columns: ["borrower","liquidation_count","total_debt_liquidated"], rows: [["0xOverleveraged",2,358000000]] },
+  "defi-amm:q:q29": { columns: ["pair","fee_tier_bps","total_fees"], rows: [["WBTC/ETH-30",30,727800],["ETH/USDC-05",5,95750],["SOL/USDC-30",30,59100],["ARB/USDC-05",5,28000],["PEPE/WETH-100",100,24000],["3pool-01",1,23900],["ETH/USDT-05",5,6200],["crvUSD/USDT-01",1,5000],["LDO/ETH-30",30,0],["OP/USDC-30",30,0]] },
+  "defi-amm:q:q30": { columns: ["swap_date","daily_swaps","daily_volume"], rows: [["2026-06-01",6,122000000],["2026-06-02",5,216700000],["2026-06-03",5,126400000],["2026-06-04",4,30200000],["2026-06-05",4,144200000],["2026-06-06",4,122300000],["2026-06-07",2,51800000]] },
+  "defi-amm:q:q31": { columns: ["chain","protocol_count","chain_tvl"], rows: [["Ethereum",4,18600000000],["Arbitrum",1,850000000],["Optimism",1,420000000]] },
+  "defi-amm:q:q32": { columns: ["position_id","owner","fees_earned_cents","impermanent_loss_cents","loss_to_fee_pct"], rows: [[6,"0xLP_Epsilon",380000,520000,136.8],[17,"0xLP_Mu",180000,290000,161.1]] },
+  "defi-amm:q:q33": { columns: ["protocol_name","count","total_bonuses"], rows: [["Aave V3",6,41500000],["MakerDAO",2,23500000],["HyperLiquid DEX",1,4600000],["Nexus AMM",1,2100000]] },
+  "defi-amm:q:q34": { columns: ["position_id","owner","tick_width","liquidity_cents"], rows: [[1,"0xLP_Alpha",1774440,250000000],[4,"0xLP_Alpha",2000,140000000],[10,"0xLP_Eta",1600,130000000],[11,"0xLP_Theta",1200,88000000],[5,"0xLP_Delta",1000,210000000],[9,"0xLP_Zeta",800,95000000],[18,"0xLP_Nu",800,48000000],[12,"0xLP_Alpha",600,75000000],[2,"0xLP_Beta",400,180000000],[16,"0xLP_Lambda",300,115000000],[3,"0xLP_Gamma",100,320000000],[8,"0xLP_Beta",40,280000000],[7,"0xLP_Stable",20,450000000],[13,"0xLP_Stable",10,220000000]] },
+  "defi-amm:q:q35": { columns: ["swap_id","pool_id","amount_in_cents","slippage_bps","is_mev"], rows: [[5,3,1500000,100,0],[17,3,900000,100,0],[4,2,8500000,30,0],[8,6,6400000,30,0],[10,2,3100000,30,0],[16,2,62000000,30,1],[19,6,5500000,30,0],[21,2,95000000,30,1],[27,2,74000000,30,1],[29,6,7800000,30,0]] },
+  "defi-amm:q:q36": { columns: ["asset","loan_count","total_principal","total_fees"], rows: [["USDC",6,15450000000,7725000],["DAI",2,6300000000,0],["WETH",2,2350000000,1175000],["WBTC",1,2100000000,1050000],["ARB",1,420000000,210000]] },
+  "defi-amm:q:q37": { columns: ["debt_asset","events","total_debt_covered"], rows: [["DAI",3,594000000],["USDC",6,483000000],["USDT",1,218000000]] },
+  "defi-amm:q:q38": { columns: ["pool_id","max_swap_amount"], rows: [[4,120000000],[2,95000000],[1,85000000],[5,35000000],[9,32000000],[7,8200000],[6,7800000],[3,1500000]] },
+  "defi-amm:q:q39": { columns: ["tier_type","pool_count","total_liquidity"], rows: [["stable",5,6280000000],["volatile",5,2910000000]] },
+  "defi-amm:q:q40": { columns: ["eth_btc_ratio"], rows: [[0.0504]] },
+  "defi-amm:q:q41": { columns: ["pool_id","total_vol","vol_share_pct"], rows: [[2,242600000,29.82],[4,239000000,29.38],[1,191500000,23.54],[5,56000000,6.88],[9,50000000,6.15],[6,19700000,2.42],[7,12400000,1.52],[3,2400000,0.29]] },
+  "defi-amm:q:q42": { columns: ["borrower","total_borrowed","vol_rank","dense_vol_rank"], rows: [["0xArbBot99",9800000000,1,1],["0xMevSearcher",7700000000,2,2],["0xWhaleArb",4500000000,3,3],["0xLiquidator1",2350000000,4,4],["0xLiquidator2",1200000000,5,5],["0xNexusArb",1070000000,6,6]] },
+  "defi-amm:q:q43": { columns: ["swap_id","timestamp","prev_timestamp"], rows: [[1,"2026-06-01 08:14:02",null],[2,"2026-06-01 09:30:15","2026-06-01 08:14:02"],[3,"2026-06-01 09:30:16","2026-06-01 09:30:15"],[9,"2026-06-02 11:55:00","2026-06-01 09:30:16"],[15,"2026-06-03 14:02:50","2026-06-02 11:55:00"],[20,"2026-06-04 15:10:00","2026-06-03 14:02:50"],[24,"2026-06-05 16:45:00","2026-06-04 15:10:00"],[28,"2026-06-06 15:40:10","2026-06-05 16:45:00"]] },
+  "defi-amm:q:q44": { columns: ["liquidation_id","borrower","bonus_cents","debt_cents","bonus_yield_pct","yield_rank"], rows: [[3,"0xVault404",8000000,142000000,5.63,1],[10,"0xPerpTrader",4600000,83000000,5.54,2],[7,"0xCDP_User9",15500000,280000000,5.54,3],[9,"0xOverleveraged",7750000,140000000,5.54,3],[1,"0xBadDebt1",5250000,95000000,5.53,5],[5,"0xArbFarmer",2100000,38000000,5.53,5],[6,"0xRiskTaker",9500000,172000000,5.52,7],[4,"0xDeFiDeg",4250000,77000000,5.52,8],[2,"0xOverleveraged",12000000,218000000,5.5,9],[8,"0xBadDebt2",2750000,50000000,5.5,10]] },
+  "defi-amm:q:q45": { columns: ["position_id","owner","fee_yield_pct","yield_tier"], rows: [[3,"0xLP_Gamma",0.444,"High Yield"],[5,"0xLP_Delta",0.424,"High Yield"],[2,"0xLP_Beta",0.378,"High Yield"],[4,"0xLP_Alpha",0.364,"High Yield"],[16,"0xLP_Lambda",0.296,"Standard"],[11,"0xLP_Theta",0.278,"Standard"],[9,"0xLP_Zeta",0.221,"Standard"],[12,"0xLP_Alpha",0.213,"Standard"],[18,"0xLP_Nu",0.192,"Standard"],[1,"0xLP_Alpha",0.17,"Standard"],[10,"0xLP_Eta",0.15,"Standard"],[8,"0xLP_Beta",0.03,"Standard"],[13,"0xLP_Stable",0.028,"Standard"],[7,"0xLP_Stable",0.027,"Standard"]] },
+  "defi-amm:q:q46": { columns: ["name","chain","tvl_cents","chain_rank"], rows: [["Nexus AMM","Arbitrum",850000000,1],["Aave V3","Ethereum",6200000000,1],["MakerDAO","Ethereum",5400000000,2],["Uniswap V3","Ethereum",4850000000,3],["Curve Finance","Ethereum",2150000000,4],["HyperLiquid DEX","Optimism",420000000,1]] },
+  "defi-amm:q:q47": { columns: ["is_mev","min_slip","max_slip","avg_slip","total_fees"], rows: [[1,5,30,17.5,775500],[0,1,100,17.38,194250]] },
+  "defi-amm:q:q48": { columns: ["liquidation_id","timestamp","debt_cents","cumulative_debt_cents"], rows: [[1,"2026-06-01 16:40:22",95000000,95000000],[2,"2026-06-02 04:12:15",218000000,313000000],[3,"2026-06-02 18:30:00",142000000,455000000],[4,"2026-06-03 10:05:40",77000000,532000000],[5,"2026-06-03 22:15:10",38000000,570000000],[6,"2026-06-04 11:20:00",172000000,742000000],[7,"2026-06-05 06:45:00",280000000,1022000000],[8,"2026-06-05 19:10:30",50000000,1072000000],[9,"2026-06-06 08:50:00",140000000,1212000000],[10,"2026-06-06 20:30:00",83000000,1295000000]] },
+  "defi-amm:q:q49": { columns: ["protocol_id","total_principal","total_fees","realized_fee_bps"], rows: [[5,1070000000,535000,5],[2,19250000000,9625000,5],[4,6300000000,0,0]] },
+  "defi-amm:q:q50": { columns: ["pair","total_fees","total_il","il_to_fees_pct"], rows: [["ETH/USDC-05",2525000,1285000,50.89],["WBTC/ETH-30",1400000,690000,49.29],["ARB/USDC-05",745000,327000,43.89],["SOL/USDC-30",245000,110000,44.9],["3pool-01",205000,3700,1.8],["ETH/USDT-05",160000,55000,34.38],["OP/USDC-30",92000,38000,41.3],["crvUSD/USDT-01",62000,800,1.29]] },
+  "defi-amm:q:q51": { columns: ["sender","total_volume","volume_quartile"], rows: [["0xArbBot99",180000000,1],["0xMevSearcher",136000000,1],["0xWhale1",120000000,1],["0xBob",56000000,1],["0xTreasury",50000000,1],["0xJitBot",45000000,1],["0xSandwich",35000000,1],["0xYvonne",32000000,2],["0xSybil",25000000,2],["0xHeidi",18000000,2],["0xVictor",16000000,2],["0xMallory",14000000,2],["0xAlice",12800000,2],["0xZoe",11500000,2],["0xPeggy",9800000,3],["0xCarol",8500000,3],["0xTrent",8200000,3],["0xIvan",7200000,3],["0xEve",6400000,3],["0xOscar",5500000,3],["0xWalter",4800000,4],["0xGrace",4200000,4],["0xFrank",3100000,4],["0xDave",2200000,4],["0xDegen1",1500000,4],["0xJudy",900000,4]] },
+  "defi-amm:q:q52": { columns: ["pair","deviation_bps","price_cents","severity"], rows: [["PEPE/USD",150,1,"CRITICAL"],["ARB/USD",45,115,"CRITICAL"],["SOL/USD",28,14500,"WATCH"]] },
+  "defi-amm:q:q53": { columns: ["swap_id","pool_id","amount_in_cents","rolling_3_avg"], rows: [[1,1,5000000,5000000],[2,1,12000000,8500000],[3,1,45000000,20666666.67],[9,1,85000000,47333333.33],[15,1,7200000,45733333.33],[20,1,9800000,34000000],[24,1,16000000,11000000],[28,1,11500000,12433333.33],[4,2,8500000,8500000],[10,2,3100000,5800000],[16,2,62000000,24533333.33],[21,2,95000000,53366666.67],[27,2,74000000,77000000],[5,3,1500000,1500000],[17,3,900000,1200000],[6,4,50000000,50000000],[11,4,120000000,85000000],[22,4,25000000,65000000],[30,4,44000000,63000000],[7,5,2200000,2200000],[12,5,35000000,18600000],[18,5,14000000,17066666.67],[25,5,4800000,17933333.33],[8,6,6400000,6400000],[19,6,5500000,5950000],[29,6,7800000,6566666.67],[13,7,4200000,4200000],[23,7,8200000,6200000],[14,9,18000000,18000000],[26,9,32000000,25000000]] },
+  "defi-amm:q:q54": { columns: ["liquidation_id","bonus_cents","debt_cents","bonus_percent_rank"], rows: [[7,15500000,280000000,1],[2,12000000,218000000,0.8888888888888888],[6,9500000,172000000,0.7777777777777778],[3,8000000,142000000,0.6666666666666666],[9,7750000,140000000,0.5555555555555556],[1,5250000,95000000,0.4444444444444444],[10,4600000,83000000,0.3333333333333333],[4,4250000,77000000,0.2222222222222222],[8,2750000,50000000,0.1111111111111111],[5,2100000,38000000,0]] },
+  "defi-amm:q:q55": { columns: ["borrower","borrower_debt","debt_share_pct"], rows: [["0xOverleveraged",358000000,27.64],["0xCDP_User9",280000000,21.62],["0xRiskTaker",172000000,13.28],["0xVault404",142000000,10.97],["0xBadDebt1",95000000,7.34],["0xPerpTrader",83000000,6.41],["0xDeFiDeg",77000000,5.95],["0xBadDebt2",50000000,3.86],["0xArbFarmer",38000000,2.93]] },
+  "defi-amm:q:q56": { columns: ["sender","mev_txs","total_mev_volume"], rows: [["0xArbBot99",2,180000000],["0xMevSearcher",2,136000000],["0xJitBot",1,45000000],["0xSandwich",1,35000000]] },
+  "defi-amm:q:q57": { columns: ["position_health","position_count","total_liquidity"], rows: [["Profitable",16,2718000000],["Underwater",2,75000000]] },
+  "defi-amm:q:q58": { columns: ["pair","total_fees","reserves","fee_capture_bps"], rows: [["WBTC/ETH-30",727800,1700000000,4.28],["SOL/USDC-30",59100,560000000,1.06],["PEPE/WETH-100",24000,240000000,1],["ARB/USDC-05",28000,680000000,0.41],["ETH/USDC-05",95750,2500000000,0.38],["ETH/USDT-05",6200,380000000,0.16],["3pool-01",23900,1900000000,0.13],["crvUSD/USDT-01",5000,820000000,0.06]] },
+  "defi-amm:q:q59": { columns: ["total_arb_loans","unique_arbers","total_volume","total_fees"], rows: [[9,4,23070000000,8385000]] },
+  "defi-amm:q:q60": { columns: ["total_protocols","active_pools","total_swaps","gross_volume_cents","total_fees_cents"], rows: [[6,9,30,813600000,969750]] },
+  "defi-amm:m:m01:opts": { options: [
+    "9",
+    "10",
+    "1",
+    "3"
+  ], answer: 0 },
+  "defi-amm:m:m02:opts": { options: [
+    "4",
+    "6",
+    "1",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m03:opts": { options: [
+    "6",
+    "30",
+    "24",
+    "7"
+  ], answer: 0 },
+  "defi-amm:m:m04:opts": { options: [
+    "14",
+    "18",
+    "2",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m05:opts": { options: [
+    "3",
+    "6",
+    "1",
+    "4"
+  ], answer: 0 },
+  "defi-amm:m:m08:opts": { options: [
+    "9",
+    "12",
+    "3",
+    "2"
+  ], answer: 0 },
+  "defi-amm:m:m10:opts": { options: [
+    "2",
+    "18",
+    "14",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m11:opts": { options: [
+    "3",
+    "10",
+    "2",
+    "6"
+  ], answer: 0 },
+  "defi-amm:m:m12:opts": { options: [
+    "3",
+    "4",
+    "2",
+    "10"
+  ], answer: 0 },
+  "defi-amm:m:m13:opts": { options: [
+    "2",
+    "6",
+    "4",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m15:opts": { options: [
+    "2",
+    "30",
+    "10",
+    "19"
+  ], answer: 0 },
+  "defi-amm:m:m16:opts": { options: [
+    "9",
+    "10",
+    "6",
+    "3"
+  ], answer: 0 },
+  "defi-amm:m:m17:opts": { options: [
+    "2",
+    "10",
+    "5",
+    "1"
+  ], answer: 0 },
+  "defi-amm:m:m19:opts": { options: [
+    "4",
+    "10",
+    "2",
+    "9"
+  ], answer: 0 },
+  "defi-amm:m:m20:opts": { options: [
+    "2",
+    "12",
+    "10",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m21:opts": { options: [
+    "2",
+    "8",
+    "6",
+    "3"
+  ], answer: 0 },
+  "defi-amm:m:m22:opts": { options: [
+    "1",
+    "8",
+    "10",
+    "9"
+  ], answer: 0 },
+  "defi-amm:m:m23:opts": { options: [
+    "16",
+    "18",
+    "2",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m25:opts": { options: [
+    "2",
+    "6",
+    "4",
+    "1"
+  ], answer: 0 },
+  "defi-amm:m:m26:opts": { options: [
+    "2",
+    "30",
+    "0",
+    "6"
+  ], answer: 0 },
+  "defi-amm:m:m27:opts": { options: [
+    "8",
+    "12",
+    "2",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m28:opts": { options: [
+    "2",
+    "18",
+    "16",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m29:opts": { options: [
+    "2",
+    "10",
+    "6",
+    "3"
+  ], answer: 0 },
+  "defi-amm:m:m30:opts": { options: [
+    "2",
+    "4",
+    "0",
+    "10"
+  ], answer: 0 },
+  "defi-amm:m:m32:opts": { options: [
+    "4",
+    "12",
+    "8",
+    "2"
+  ], answer: 0 },
+  "defi-amm:m:m34:opts": { options: [
+    "10",
+    "9",
+    "1",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m35:opts": { options: [
+    "2",
+    "10",
+    "8",
+    "1"
+  ], answer: 0 },
+  "defi-amm:m:m36:opts": { options: [
+    "3",
+    "30",
+    "27",
+    "2"
+  ], answer: 0 },
+  "defi-amm:m:m37:opts": { options: [
+    "4",
+    "1",
+    "10",
+    "3"
+  ], answer: 0 },
+  "defi-amm:m:m38:opts": { options: [
+    "5",
+    "12",
+    "3",
+    "6"
+  ], answer: 0 },
+  "defi-amm:m:m39:opts": { options: [
+    "3",
+    "2",
+    "0",
+    "18"
+  ], answer: 0 },
+  "defi-amm:m:m40:opts": { options: [
+    "2",
+    "6",
+    "4",
+    "1"
+  ], answer: 0 },
+  "defi-amm:m:m41:opts": { options: [
+    "3",
+    "2",
+    "10",
+    "4"
+  ], answer: 0 },
+  "defi-amm:m:m42:opts": { options: [
+    "2",
+    "4",
+    "6",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m43:opts": { options: [
+    "10",
+    "1",
+    "4",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m45:opts": { options: [
+    "1",
+    "6",
+    "2",
+    "3"
+  ], answer: 0 },
+  "defi-amm:m:m46:opts": { options: [
+    "2",
+    "0",
+    "6",
+    "24"
+  ], answer: 0 },
+  "defi-amm:m:m47:opts": { options: [
+    "2",
+    "9",
+    "4",
+    "10"
+  ], answer: 0 },
+  "defi-amm:m:m49:opts": { options: [
+    "3",
+    "4",
+    "10",
+    "1"
+  ], answer: 0 },
+  "defi-amm:m:m50:opts": { options: [
+    "3",
+    "1",
+    "10",
+    "6"
+  ], answer: 0 },
+  "defi-amm:m:m51:opts": { options: [
+    "4",
+    "22",
+    "26",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m52:opts": { options: [
+    "3",
+    "1",
+    "2",
+    "6"
+  ], answer: 0 },
+  "defi-amm:m:m53:opts": { options: [
+    "2",
+    "0",
+    "6",
+    "1"
+  ], answer: 0 },
+  "defi-amm:m:m54:opts": { options: [
+    "2",
+    "1",
+    "6",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m55:opts": { options: [
+    "2",
+    "7",
+    "10",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m56:opts": { options: [
+    "24",
+    "0",
+    "6",
+    "30"
+  ], answer: 0 },
+  "defi-amm:m:m57:opts": { options: [
+    "3",
+    "4",
+    "7",
+    "1"
+  ], answer: 0 },
+  "defi-amm:m:m58:opts": { options: [
+    "1",
+    "2",
+    "3",
+    "0"
+  ], answer: 0 },
+  "defi-amm:m:m59:opts": { options: [
+    "2",
+    "4",
+    "6",
+    "12"
+  ], answer: 0 },
+  "defi-amm:m:m60:opts": { options: [
+    "4",
+    "10",
+    "14",
+    "2"
+  ], answer: 0 },
+  "defi-amm:c:c01:1": { columns: ["active_pools"], rows: [[9]] },
+  "defi-amm:c:c01:2": { columns: ["total_volume_cents","total_fees_cents"], rows: [[813600000,969750]] },
+  "defi-amm:c:c02:1": { columns: ["chain"], rows: [["Arbitrum"],["Ethereum"],["Optimism"]] },
+  "defi-amm:c:c02:2": { columns: ["chain","protocol_count"], rows: [["Ethereum",4],["Arbitrum",1],["Optimism",1]] },
+  "defi-amm:c:c03:1": { columns: ["pair","token0","token1","fee_tier_bps"], rows: [["3pool-01","DAI","USDC",1],["crvUSD/USDT-01","crvUSD","USDT",1]] },
+  "defi-amm:c:c03:2": { columns: ["total_stable_reserves"], rows: [[2720000000]] },
+  "defi-amm:c:c04:1": { columns: ["collateral_asset"], rows: [["ARB"],["ETH"],["LINK"],["SOL"],["WBTC"],["WETH"]] },
+  "defi-amm:c:c04:2": { columns: ["collateral_asset","liquidation_count"], rows: [["WETH",3],["ETH",2],["WBTC",2],["ARB",1],["LINK",1],["SOL",1]] },
+  "defi-amm:c:c05:1": { columns: ["hourly_oracles"], rows: [[4]] },
+  "defi-amm:c:c05:2": { columns: ["pair","price_cents"], rows: [["BTC/USD",6850000],["ETH/USD",345000],["SOL/USD",14500],["LINK/USD",1850]] },
+  "defi-amm:c:c06:1": { columns: ["total_loans"], rows: [[12]] },
+  "defi-amm:c:c06:2": { columns: ["arb_loans"], rows: [[9]] },
+  "defi-amm:c:c07:1": { columns: ["mev_swaps"], rows: [[6]] },
+  "defi-amm:c:c07:2": { columns: ["mev_fees_cents"], rows: [[775500]] },
+  "defi-amm:c:c08:1": { columns: ["total_debt_repaid"], rows: [[1295000000]] },
+  "defi-amm:c:c08:2": { columns: ["avg_debt_repaid"], rows: [[129500000]] },
+  "defi-amm:c:c09:1": { columns: ["active_liquidity"], rows: [[2601000000]] },
+  "defi-amm:c:c09:2": { columns: ["avg_active_liquidity"], rows: [[185785714.29]] },
+  "defi-amm:c:c10:1": { columns: ["max_dev"], rows: [[150]] },
+  "defi-amm:c:c10:2": { columns: ["pair","deviation_bps","price_cents"], rows: [["PEPE/USD",150,1]] },
+  "defi-amm:c:c11:1": { columns: ["pool1_swaps"], rows: [[8]] },
+  "defi-amm:c:c11:2": { columns: ["pool1_volume"], rows: [[191500000]] },
+  "defi-amm:c:c12:1": { columns: ["asset"], rows: [["ARB"],["DAI"],["USDC"],["WBTC"],["WETH"]] },
+  "defi-amm:c:c12:2": { columns: ["asset","loan_count"], rows: [["USDC",6],["DAI",2],["WETH",2],["ARB",1],["WBTC",1]] },
+  "defi-amm:c:c13:1": { columns: ["min_bonus","max_bonus"], rows: [[2100000,15500000]] },
+  "defi-amm:c:c13:2": { columns: ["maker_bonuses"], rows: [[23500000]] },
+  "defi-amm:c:c14:1": { columns: ["name","tvl_cents"], rows: [["Nexus AMM",850000000]] },
+  "defi-amm:c:c14:2": { columns: ["nexus_pools"], rows: [[2]] },
+  "defi-amm:c:c15:1": { columns: ["high_fee_swaps"], rows: [[12]] },
+  "defi-amm:c:c15:2": { columns: ["total_high_fees"], rows: [[887100]] },
+  "defi-amm:c:c16:1": { columns: ["withdrawn_count"], rows: [[2]] },
+  "defi-amm:c:c16:2": { columns: ["withdrawn_liquidity"], rows: [[75000000]] },
+  "defi-amm:c:c17:1": { columns: ["pair","price_cents"], rows: [["BTC/USD",6850000],["ETH/USD",345000],["SOL/USD",14500]] },
+  "defi-amm:c:c17:2": { columns: ["sub_100_usd_feeds"], rows: [[3]] },
+  "defi-amm:c:c18:1": { columns: ["zero_fee_principal"], rows: [[6300000000]] },
+  "defi-amm:c:c18:2": { columns: ["borrower","principal_cents"], rows: [["0xWhaleArb",4500000000],["0xMevSearcher",1800000000]] },
+  "defi-amm:c:c19:1": { columns: ["low_slip_swaps"], rows: [[20]] },
+  "defi-amm:c:c19:2": { columns: ["low_slip_volume"], rows: [[548900000]] },
+  "defi-amm:c:c20:1": { columns: ["debt_asset"], rows: [["DAI"],["USDC"],["USDT"]] },
+  "defi-amm:c:c20:2": { columns: ["debt_asset","liquidation_count"], rows: [["USDC",6],["DAI",3],["USDT",1]] },
+  "defi-amm:c:c21:1": { columns: ["pool_id","vol"], rows: [[2,242600000],[4,239000000],[1,191500000],[5,56000000],[9,50000000],[6,19700000],[7,12400000],[3,2400000]] },
+  "defi-amm:c:c21:2": { columns: ["pair","reserves","total_vol"], rows: [["WBTC/ETH-30",1700000000,242600000],["3pool-01",1900000000,239000000],["ETH/USDC-05",2500000000,191500000],["ARB/USDC-05",680000000,56000000],["crvUSD/USDT-01",820000000,50000000],["SOL/USDC-30",560000000,19700000],["ETH/USDT-05",380000000,12400000],["PEPE/WETH-100",240000000,2400000],["LDO/ETH-30",220000000,0],["OP/USDC-30",190000000,0]] },
+  "defi-amm:c:c22:1": { columns: ["protocol_id","total_principal","total_fees"], rows: [[2,19250000000,9625000],[5,1070000000,535000],[4,6300000000,0]] },
+  "defi-amm:c:c22:2": { columns: ["protocol_id","fee_bps"], rows: [[5,5],[2,5],[4,0]] },
+  "defi-amm:c:c23:1": { columns: ["position_id","owner","net_cents"], rows: [[3,"0xLP_Gamma",530000],[5,"0xLP_Delta",440000],[2,"0xLP_Beta",370000],[1,"0xLP_Alpha",340000],[4,"0xLP_Alpha",270000],[16,"0xLP_Lambda",155000],[11,"0xLP_Theta",135000],[9,"0xLP_Zeta",132000],[10,"0xLP_Eta",131000],[7,"0xLP_Stable",118500],[12,"0xLP_Alpha",105000],[8,"0xLP_Beta",82800],[13,"0xLP_Stable",61200],[18,"0xLP_Nu",54000]] },
+  "defi-amm:c:c23:2": { columns: ["owner","total_net"], rows: [["0xLP_Alpha",715000],["0xLP_Gamma",530000],["0xLP_Beta",452800],["0xLP_Delta",440000],["0xLP_Stable",179700],["0xLP_Lambda",155000],["0xLP_Theta",135000],["0xLP_Zeta",132000],["0xLP_Eta",131000],["0xLP_Nu",54000]] },
+  "defi-amm:c:c24:1": { columns: ["liquidation_id","borrower","recovery_pct"], rows: [[3,"0xVault404",112.68],[10,"0xPerpTrader",110.84],[7,"0xCDP_User9",110.71],[9,"0xOverleveraged",110.71],[1,"0xBadDebt1",110.53],[5,"0xArbFarmer",110.53],[6,"0xRiskTaker",110.47],[4,"0xDeFiDeg",110.39],[2,"0xOverleveraged",110.09],[8,"0xBadDebt2",110]] },
+  "defi-amm:c:c24:2": { columns: ["collateral_asset","avg_recovery"], rows: [["ETH",111.76],["WETH",110.57],["ARB",110.53],["WBTC",110.4],["SOL",110.39],["LINK",110]] },
+  "defi-amm:c:c25:1": { columns: ["sender","swaps","volume"], rows: [["0xArbBot99",2,180000000],["0xMevSearcher",2,136000000],["0xBob",2,56000000],["0xAlice",2,12800000],["0xWhale1",1,120000000]] },
+  "defi-amm:c:c25:2": { columns: ["repeat_traders"], rows: [[4]] },
+  "defi-amm:c:c26:1": { columns: ["is_mev","fees"], rows: [[0,194250],[1,775500]] },
+  "defi-amm:c:c26:2": { columns: ["mev_fee_share_pct"], rows: [[79.97]] },
+  "defi-amm:c:c27:1": { columns: ["pair","deviation_bps","price_cents"], rows: [["PEPE/USD",150,1],["ARB/USD",45,115],["SOL/USD",28,14500]] },
+  "defi-amm:c:c27:2": { columns: ["avg_deviation"], rows: [[45]] },
+  "defi-amm:c:c28:1": { columns: ["borrower","count"], rows: [["0xOverleveraged",2]] },
+  "defi-amm:c:c28:2": { columns: ["total_repeat_debt"], rows: [[358000000]] },
+  "defi-amm:c:c29:1": { columns: ["pair","pool_depth"], rows: [["ETH/USDC-05",2500000000],["3pool-01",1900000000],["WBTC/ETH-30",1700000000],["crvUSD/USDT-01",820000000],["ARB/USDC-05",680000000],["SOL/USDC-30",560000000],["ETH/USDT-05",380000000],["PEPE/WETH-100",240000000],["OP/USDC-30",190000000]] },
+  "defi-amm:c:c29:2": { columns: ["total_active_reserves"], rows: [[8970000000]] },
+  "defi-amm:c:c30:1": { columns: ["debt_asset","total_bonuses"], rows: [["DAI",33000000],["USDC",26700000],["USDT",12000000]] },
+  "defi-amm:c:c30:2": { columns: ["mean_bonus"], rows: [[7170000]] },
+  "defi-amm:c:c31:1": { columns: ["date","count"], rows: [["2026-06-01",6],["2026-06-02",5],["2026-06-03",5],["2026-06-04",4],["2026-06-05",4],["2026-06-06",4],["2026-06-07",2]] },
+  "defi-amm:c:c31:2": { columns: ["date","volume"], rows: [["2026-06-01",122000000],["2026-06-02",216700000],["2026-06-03",126400000],["2026-06-04",30200000],["2026-06-05",144200000],["2026-06-06",122300000],["2026-06-07",51800000]] },
+  "defi-amm:c:c32:1": { columns: ["high_slip_count"], rows: [[10]] },
+  "defi-amm:c:c32:2": { columns: ["swap_id","pool_id","amount_in_cents","slippage_bps"], rows: [[5,3,1500000,100],[17,3,900000,100],[4,2,8500000,30],[8,6,6400000,30],[10,2,3100000,30],[16,2,62000000,30],[19,6,5500000,30],[21,2,95000000,30],[27,2,74000000,30],[29,6,7800000,30]] },
+  "defi-amm:c:c33:1": { columns: ["asset","volume"], rows: [["USDC",15450000000],["DAI",6300000000],["WETH",2350000000],["WBTC",2100000000],["ARB",420000000]] },
+  "defi-amm:c:c33:2": { columns: ["asset","volume"], rows: [["USDC",15450000000]] },
+  "defi-amm:c:c34:1": { columns: ["position_id","owner","il_pct"], rows: [[3,"0xLP_Gamma",0.278],[5,"0xLP_Delta",0.214],[2,"0xLP_Beta",0.172],[4,"0xLP_Alpha",0.171],[16,"0xLP_Lambda",0.161],[11,"0xLP_Theta",0.125],[9,"0xLP_Zeta",0.082],[18,"0xLP_Nu",0.079],[12,"0xLP_Alpha",0.073],[10,"0xLP_Eta",0.049],[1,"0xLP_Alpha",0.034],[8,"0xLP_Beta",0.001],[7,"0xLP_Stable",0],[13,"0xLP_Stable",0]] },
+  "defi-amm:c:c34:2": { columns: ["max_active_il"], rows: [[890000]] },
+  "defi-amm:c:c35:1": { columns: ["chain","total_tvl"], rows: [["Ethereum",18600000000],["Arbitrum",850000000],["Optimism",420000000]] },
+  "defi-amm:c:c35:2": { columns: ["eth_tvl_share"], rows: [[93.61]] },
+  "defi-amm:c:c36:1": { columns: ["is_arbitrage","count","volume"], rows: [[1,9,23070000000],[0,3,3550000000]] },
+  "defi-amm:c:c36:2": { columns: ["avg_arb_fee"], rows: [[931666.67]] },
+  "defi-amm:c:c37:1": { columns: ["pool_id","fees"], rows: [[2,727800],[1,95750],[6,59100],[5,28000],[3,24000],[4,23900],[7,6200],[9,5000]] },
+  "defi-amm:c:c37:2": { columns: ["pair","total_fees"], rows: [["WBTC/ETH-30",727800],["ETH/USDC-05",95750],["SOL/USDC-30",59100]] },
+  "defi-amm:c:c38:1": { columns: ["pair","price_cents"], rows: [["BTC/USD",6850000],["ETH/USD",345000]] },
+  "defi-amm:c:c38:2": { columns: ["eth_pct_of_btc"], rows: [[5.04]] },
+  "defi-amm:c:c39:1": { columns: ["liquidation_id","borrower","collateral_cents","debt_cents"], rows: [[7,"0xCDP_User9",310000000,280000000],[2,"0xOverleveraged",240000000,218000000],[6,"0xRiskTaker",190000000,172000000],[3,"0xVault404",160000000,142000000],[9,"0xOverleveraged",155000000,140000000]] },
+  "defi-amm:c:c39:2": { columns: ["top5_collateral"], rows: [[1055000000]] },
+  "defi-amm:c:c40:1": { columns: ["avg_tick_width"], rows: [[127379.3]] },
+  "defi-amm:c:c40:2": { columns: ["position_id","owner","width"], rows: [[13,"0xLP_Stable",10],[7,"0xLP_Stable",20],[8,"0xLP_Beta",40],[3,"0xLP_Gamma",100]] },
+  "defi-amm:c:c41:1": { columns: ["pool_id","total_vol","share_pct"], rows: [[2,242600000,29.82],[4,239000000,29.38],[1,191500000,23.54],[5,56000000,6.88],[9,50000000,6.15],[6,19700000,2.42],[7,12400000,1.52],[3,2400000,0.29]] },
+  "defi-amm:c:c41:2": { columns: ["pool_id","total_vol","running_vol"], rows: [[2,242600000,242600000],[4,239000000,481600000],[1,191500000,673100000],[5,56000000,729100000],[9,50000000,779100000],[6,19700000,798800000],[7,12400000,811200000],[3,2400000,813600000]] },
+  "defi-amm:c:c42:1": { columns: ["borrower","vol","rnk"], rows: [["0xArbBot99",9800000000,1],["0xMevSearcher",7700000000,2],["0xWhaleArb",4500000000,3],["0xLiquidator1",2350000000,4],["0xLiquidator2",1200000000,5],["0xNexusArb",1070000000,6]] },
+  "defi-amm:c:c42:2": { columns: ["borrower","vol","d_rnk"], rows: [["0xArbBot99",9800000000,1],["0xMevSearcher",7700000000,2],["0xWhaleArb",4500000000,3],["0xLiquidator1",2350000000,4],["0xLiquidator2",1200000000,5],["0xNexusArb",1070000000,6]] },
+  "defi-amm:c:c43:1": { columns: ["position_id","owner","net","quartile"], rows: [[3,"0xLP_Gamma",530000,1],[5,"0xLP_Delta",440000,1],[2,"0xLP_Beta",370000,1],[1,"0xLP_Alpha",340000,1],[4,"0xLP_Alpha",270000,2],[16,"0xLP_Lambda",155000,2],[11,"0xLP_Theta",135000,2],[9,"0xLP_Zeta",132000,2],[10,"0xLP_Eta",131000,3],[7,"0xLP_Stable",118500,3],[12,"0xLP_Alpha",105000,3],[8,"0xLP_Beta",82800,4],[13,"0xLP_Stable",61200,4],[18,"0xLP_Nu",54000,4]] },
+  "defi-amm:c:c43:2": { columns: ["top_quartile_avg_net"], rows: [[420000]] },
+  "defi-amm:c:c44:1": { columns: ["liquidation_id","timestamp","debt_cents","running_debt"], rows: [[1,"2026-06-01 16:40:22",95000000,95000000],[2,"2026-06-02 04:12:15",218000000,313000000],[3,"2026-06-02 18:30:00",142000000,455000000],[4,"2026-06-03 10:05:40",77000000,532000000],[5,"2026-06-03 22:15:10",38000000,570000000],[6,"2026-06-04 11:20:00",172000000,742000000],[7,"2026-06-05 06:45:00",280000000,1022000000],[8,"2026-06-05 19:10:30",50000000,1072000000],[9,"2026-06-06 08:50:00",140000000,1212000000],[10,"2026-06-06 20:30:00",83000000,1295000000]] },
+  "defi-amm:c:c44:2": { columns: ["liquidation_id","timestamp","rolling_3_debt"], rows: [[1,"2026-06-01 16:40:22",95000000],[2,"2026-06-02 04:12:15",156500000],[3,"2026-06-02 18:30:00",151666666.67],[4,"2026-06-03 10:05:40",145666666.67],[5,"2026-06-03 22:15:10",85666666.67],[6,"2026-06-04 11:20:00",95666666.67],[7,"2026-06-05 06:45:00",163333333.33],[8,"2026-06-05 19:10:30",167333333.33],[9,"2026-06-06 08:50:00",156666666.67],[10,"2026-06-06 20:30:00",91000000]] },
+  "defi-amm:c:c45:1": { columns: ["name","chain","tvl_cents","chain_rank"], rows: [["Nexus AMM","Arbitrum",850000000,1],["Aave V3","Ethereum",6200000000,1],["MakerDAO","Ethereum",5400000000,2],["Uniswap V3","Ethereum",4850000000,3],["Curve Finance","Ethereum",2150000000,4],["HyperLiquid DEX","Optimism",420000000,1]] },
+  "defi-amm:c:c45:2": { columns: ["name","chain","tvl_cents","share_in_chain"], rows: [["Nexus AMM","Arbitrum",850000000,100],["Aave V3","Ethereum",6200000000,33.33],["MakerDAO","Ethereum",5400000000,29.03],["Uniswap V3","Ethereum",4850000000,26.08],["Curve Finance","Ethereum",2150000000,11.56],["HyperLiquid DEX","Optimism",420000000,100]] },
+  "defi-amm:c:c46:1": { columns: ["swap_id","amount_in_cents","prev_amount"], rows: [[1,5000000,null],[2,12000000,5000000],[3,45000000,12000000],[9,85000000,45000000],[15,7200000,85000000],[20,9800000,7200000],[24,16000000,9800000],[28,11500000,16000000]] },
+  "defi-amm:c:c46:2": { columns: ["swap_id","amount_in_cents","delta_cents"], rows: [[1,5000000,0],[2,12000000,7000000],[3,45000000,33000000],[9,85000000,40000000],[15,7200000,-77800000],[20,9800000,2600000],[24,16000000,6200000],[28,11500000,-4500000]] },
+  "defi-amm:c:c47:1": { columns: ["pair","deviation_bps","status_tier"], rows: [["PEPE/USD",150,"CRITICAL"],["ARB/USD",45,"CRITICAL"],["SOL/USD",28,"WARNING"],["LINK/USD",20,"WARNING"],["ETH/USD",15,"NORMAL"],["BTC/USD",12,"NORMAL"]] },
+  "defi-amm:c:c47:2": { columns: ["status_tier","feed_count"], rows: [["WARNING",2],["NORMAL",2],["CRITICAL",2]] },
+  "defi-amm:c:c48:1": { columns: ["liquidation_id","borrower","yield_pct","rnk"], rows: [[3,"0xVault404",5.63,1],[10,"0xPerpTrader",5.54,2],[7,"0xCDP_User9",5.54,3],[9,"0xOverleveraged",5.54,3],[1,"0xBadDebt1",5.53,5],[5,"0xArbFarmer",5.53,5],[6,"0xRiskTaker",5.52,7],[4,"0xDeFiDeg",5.52,8],[2,"0xOverleveraged",5.5,9],[8,"0xBadDebt2",5.5,10]] },
+  "defi-amm:c:c48:2": { columns: ["mean_bonus_yield_pct"], rows: [[5.53]] },
+  "defi-amm:c:c49:1": { columns: ["borrower","debt","share_pct"], rows: [["0xOverleveraged",358000000,27.64],["0xCDP_User9",280000000,21.62],["0xRiskTaker",172000000,13.28],["0xVault404",142000000,10.97],["0xBadDebt1",95000000,7.34],["0xPerpTrader",83000000,6.41],["0xDeFiDeg",77000000,5.95],["0xBadDebt2",50000000,3.86],["0xArbFarmer",38000000,2.93]] },
+  "defi-amm:c:c49:2": { columns: ["top_borrower_share_pct"], rows: [[27.64]] },
+  "defi-amm:c:c50:1": { columns: ["pair","bps_yield"], rows: [["WBTC/ETH-30",4.28],["SOL/USDC-30",1.06],["PEPE/WETH-100",1],["ARB/USDC-05",0.41],["ETH/USDC-05",0.38],["ETH/USDT-05",0.16],["3pool-01",0.13],["crvUSD/USDT-01",0.06]] },
+  "defi-amm:c:c50:2": { columns: ["top_pool_pair"], rows: [["WBTC/ETH-30"]] },
+  "defi-amm:c:c51:1": { columns: ["swap_id","pool_id","amount_in_cents","rolling_avg"], rows: [[1,1,5000000,5000000],[2,1,12000000,8500000],[3,1,45000000,20666666.67],[9,1,85000000,47333333.33],[15,1,7200000,45733333.33],[20,1,9800000,34000000],[24,1,16000000,11000000],[28,1,11500000,12433333.33],[4,2,8500000,8500000],[10,2,3100000,5800000],[16,2,62000000,24533333.33],[21,2,95000000,53366666.67],[27,2,74000000,77000000],[5,3,1500000,1500000],[17,3,900000,1200000],[6,4,50000000,50000000],[11,4,120000000,85000000],[22,4,25000000,65000000],[30,4,44000000,63000000],[7,5,2200000,2200000],[12,5,35000000,18600000],[18,5,14000000,17066666.67],[25,5,4800000,17933333.33],[8,6,6400000,6400000],[19,6,5500000,5950000],[29,6,7800000,6566666.67],[13,7,4200000,4200000],[23,7,8200000,6200000],[14,9,18000000,18000000],[26,9,32000000,25000000]] },
+  "defi-amm:c:c51:2": { columns: ["max_rolling_avg"], rows: [[85000000]] },
+  "defi-amm:c:c52:1": { columns: ["sender","txs","vol"], rows: [["0xArbBot99",2,180000000],["0xMevSearcher",2,136000000],["0xJitBot",1,45000000],["0xSandwich",1,35000000]] },
+  "defi-amm:c:c52:2": { columns: ["top_searcher_mev_share"], rows: [[45.45]] },
+  "defi-amm:c:c53:1": { columns: ["arb_count","total_principal","total_fees"], rows: [[9,23070000000,8385000]] },
+  "defi-amm:c:c53:2": { columns: ["is_arbitrage","mean_principal"], rows: [[1,2563333333.33],[0,1183333333.33]] },
+  "defi-amm:c:c54:1": { columns: ["position_id","owner","status_health"], rows: [[1,"0xLP_Alpha","Profitable"],[2,"0xLP_Beta","Profitable"],[3,"0xLP_Gamma","Profitable"],[4,"0xLP_Alpha","Profitable"],[5,"0xLP_Delta","Profitable"],[6,"0xLP_Epsilon","Deficit"],[7,"0xLP_Stable","Profitable"],[8,"0xLP_Beta","Profitable"],[9,"0xLP_Zeta","Profitable"],[10,"0xLP_Eta","Profitable"],[11,"0xLP_Theta","Profitable"],[12,"0xLP_Alpha","Profitable"],[13,"0xLP_Stable","Profitable"],[14,"0xLP_Iota","Profitable"],[15,"0xLP_Kappa","Profitable"],[16,"0xLP_Lambda","Profitable"],[17,"0xLP_Mu","Deficit"],[18,"0xLP_Nu","Profitable"]] },
+  "defi-amm:c:c54:2": { columns: ["status_health","count"], rows: [["Profitable",16],["Deficit",2]] },
+  "defi-amm:c:c55:1": { columns: ["collateral_asset","total_c","share_pct"], rows: [["WBTC",550000000,38.35],["WETH",450000000,31.38],["ETH",252000000,17.57],["SOL",85000000,5.93],["LINK",55000000,3.84],["ARB",42000000,2.93]] },
+  "defi-amm:c:c55:2": { columns: ["top_collateral_asset"], rows: [["WBTC"]] },
+  "defi-amm:c:c56:1": { columns: ["above_avg_swaps"], rows: [[10]] },
+  "defi-amm:c:c56:2": { columns: ["above_avg_volume"], rows: [[642000000]] },
+  "defi-amm:c:c57:1": { columns: ["pair","price_cents","diff_from_mean"], rows: [["BTC/USD",6850000,5648089],["ETH/USD",345000,-856911],["SOL/USD",14500,-1187411],["LINK/USD",1850,-1200061],["ARB/USD",115,-1201796],["PEPE/USD",1,-1201910]] },
+  "defi-amm:c:c57:2": { columns: ["overall_avg_price"], rows: [[1201911]] },
+  "defi-amm:c:c58:1": { columns: ["swap_id","slippage_bps","slip_pct_rank"], rows: [[5,100,0.966],[17,100,0.966],[4,30,0.69],[8,30,0.69],[10,30,0.69],[16,30,0.69],[19,30,0.69],[21,30,0.69],[27,30,0.69],[29,30,0.69],[2,10,0.655],[1,6,0.621],[3,5,0.207],[7,5,0.207],[9,5,0.207],[12,5,0.207],[13,5,0.207],[15,5,0.207],[18,5,0.207],[20,5,0.207],[23,5,0.207],[24,5,0.207],[25,5,0.207],[28,5,0.207],[6,1,0],[11,1,0],[14,1,0],[22,1,0],[26,1,0],[30,1,0]] },
+  "defi-amm:c:c58:2": { columns: ["top_quintile_slippage_swaps"], rows: [[2]] },
+  "defi-amm:c:c59:1": { columns: ["protocol_id","total_debt","total_bonus"], rows: [[2,752000000,41500000],[4,422000000,23500000],[6,83000000,4600000],[5,38000000,2100000]] },
+  "defi-amm:c:c59:2": { columns: ["yield_pct"], rows: [[5.54]] },
+  "defi-amm:c:c60:1": { columns: ["total_swaps","volume","fees"], rows: [[30,813600000,969750]] },
+  "defi-amm:c:c60:2": { columns: ["protocols","pools","swaps","flash_loans","liquidations"], rows: [[6,10,30,12,10]] },
 };

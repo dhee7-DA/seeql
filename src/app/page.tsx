@@ -12,6 +12,7 @@ import {
   Copy,
   Database,
   DatabaseZap,
+  DollarSign,
   Eraser,
   Factory,
   Filter,
@@ -29,6 +30,7 @@ import {
   Timer,
   Trophy,
   Workflow,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,6 +51,8 @@ import { PlanView } from "@/components/plan-view";
 import { ParseTreeView } from "@/components/parse-tree-view";
 import { SchemaView } from "@/components/schema-view";
 import { ChartView } from "@/components/chart-view";
+import { FinanceCanvas } from "@/components/finance-canvas";
+import { DuckDbLab } from "@/components/duckdb-lab";
 import { MissionBoard } from "@/components/mission-board";
 import { QueryFlowSvg } from "@/components/query-flow-svg";
 import { RowFunnel } from "@/components/row-funnel";
@@ -707,6 +711,12 @@ function PlaygroundView({
                     >
                       <Braces className="h-3.5 w-3.5" /> JSON
                     </TabsTrigger>
+                    <TabsTrigger
+                      value="duckdb"
+                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800 text-amber-400"
+                    >
+                      <Zap className="h-3.5 w-3.5" /> DuckDB OLAP
+                    </TabsTrigger>
                   </TabsList>
                   <TabsContent value="machine" className="mt-3">
                     <QueryMachine
@@ -773,6 +783,9 @@ function PlaygroundView({
                   </TabsContent>
                   <TabsContent value="json" className="mt-3">
                     <JsonView plan={viewPlan} />
+                  </TabsContent>
+                  <TabsContent value="duckdb" className="mt-3">
+                    <DuckDbLab currentSql={sql} onApplySql={(s) => setSql(s)} />
                   </TabsContent>
                 </Tabs>
               </>
@@ -884,6 +897,14 @@ function PlaygroundView({
                         <ChartColumn className="h-3 w-3" /> Chart
                       </TabsTrigger>
                     )}
+                    {!isWrite && exec.columns.length > 0 && (
+                      <TabsTrigger
+                        value="finance"
+                        className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800 text-emerald-400"
+                      >
+                        <DollarSign className="h-3 w-3" /> Finance Canvas
+                      </TabsTrigger>
+                    )}
                   </TabsList>
                 </div>
                 <TabsContent value="results" className="mt-0">
@@ -925,6 +946,18 @@ function PlaygroundView({
                       key={ranSql}
                       columns={exec.columns}
                       rows={exec.rows}
+                    />
+                  </TabsContent>
+                )}
+                {!isWrite && exec.columns.length > 0 && (
+                  <TabsContent value="finance" className="mt-0">
+                    <FinanceCanvas
+                      columns={exec.columns}
+                      rows={exec.rows}
+                      onLoadSql={(text) => {
+                        setSampleId("");
+                        setSql(text);
+                      }}
                     />
                   </TabsContent>
                 )}

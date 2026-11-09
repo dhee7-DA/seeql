@@ -59,6 +59,11 @@ import { DM_GRID_SEED } from "./content/dm-grid-seed";
 import { DM_GRID_QUERIES } from "./content/dm-grid-queries";
 import { DM_GRID_MCQS } from "./content/dm-grid-mcqs";
 import { DM_GRID_CASES } from "./content/dm-grid-cases";
+import { DM_DEFI_SCHEMA } from "./content/dm-defi-schema";
+import { DM_DEFI_SEED } from "./content/dm-defi-seed";
+import { DM_DEFI_QUERIES } from "./content/dm-defi-queries";
+import { DM_DEFI_MCQS } from "./content/dm-defi-mcqs";
+import { DM_DEFI_CASES } from "./content/dm-defi-cases";
 
 export type DmDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -460,6 +465,40 @@ export const DM_PACKS: DmPack[] = [
     queries: DM_GRID_QUERIES,
     mcqs: DM_GRID_MCQS,
     cases: DM_GRID_CASES,
+  },
+  {
+    id: "defi-amm",
+    title: "DeFi & AMM Analytics",
+    tagline: "Concentrated liquidity, swap slippage, MEV searchers, impermanent loss and flash loan liquidations on one shared dataset.",
+    companies: [
+      { name: "Uniswap", real: true, blurb: "Decentralized AMM — concentrated liquidity ranges, fee tiers and swap routing" },
+      { name: "Aave", real: true, blurb: "Lending market — flash loans, health factors and collateral liquidations" },
+      { name: "Curve", real: true, blurb: "Stableswap protocol — pegged asset invariants, pool depths and LP yields" },
+      { name: "MakerDAO", real: true, blurb: "Credit vaults — zero-fee flash minting, liquidation bonuses and debt ratios" },
+      { name: "Chainlink", real: true, blurb: "Decentralized oracle networks — deviation thresholds, heartbeat monitors and price feeds" },
+      { name: "Nexus AMM", real: false, blurb: "Fictional Arbitrum DEX — tick boundaries, arbitrage flows and fee capture" },
+    ],
+    schema: { ...DM_DEFI_SCHEMA, seed: DM_DEFI_SEED },
+    primer: {
+      hook: "Every DeFi protocol runs the same loop: liquidity providers stake reserves, traders swap against automated bonding curves, searchers capture MEV arbitrage, and lending markets liquidate underwater collateral via flash loans.",
+      concept: [
+        "Automated Market Makers replace centralized order books with mathematical invariants. In constant product and concentrated pools, spot prices shift dynamically as trades alter reserve ratios. Basis points (bps) measure fee tiers and slippage with integer precision.",
+        "Impermanent loss measures the divergence cost of providing liquidity compared to simply holding tokens in a cold wallet. Active LPs earn swap fee yields to offset this risk, but positions out of tick range earn zero fees while taking on inventory risk.",
+        "Flash loans provide uncollateralized atomic credit that must be borrowed and returned within the exact same block execution, powering arbitrage efficiency and instantaneous vault liquidations.",
+        "Oracles broadcast decentralized cryptographic price feeds. Protocols monitor deviation thresholds and heartbeat intervals to prevent stale executions during high market volatility.",
+      ],
+      glossary: [
+        { term: "basis points (bps)", def: "1/100th of 1% (0.0001) — standard metric for AMM fee tiers (5, 30, 100 bps) and slippage" },
+        { term: "impermanent loss", def: "opportunity cost of LP capital when pooled token prices diverge from deposit ratio" },
+        { term: "flash loan", def: "atomic uncollateralized borrow repaid in the same block transaction with fee" },
+        { term: "MEV searcher", def: "arbitrageur or bot capturing maximal extractable value via sandwiching or cross-DEX price discrepancies" },
+        { term: "liquidation bonus", def: "discounted collateral percentage awarded to keepers for repaying bad protocol debt" },
+        { term: "oracle heartbeat", def: "maximum permissible interval between price feed updates before data is treated as stale" },
+      ],
+    },
+    queries: DM_DEFI_QUERIES,
+    mcqs: DM_DEFI_MCQS,
+    cases: DM_DEFI_CASES,
   },
 ];
 

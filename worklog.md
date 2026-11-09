@@ -9152,3 +9152,38 @@ Work Log:
 Stage Summary:
 - Wave 1 done: every lesson L1-L64 now carries at least one diagram (L58 x3, L59-L64 x2 each — 15 new, curriculum total 130 used figures). The windows masterclass now shows its own machinery instead of describing it; L64 got the plan-receipt + index-logarithm visuals. Wave 2 candidates remain in the legacy banks (v9-v16 never wired into lessons, cs* case figures) — next round can wire or retire them.
 - Key files: src/components/learn/diagrams-m10.tsx (new), src/components/learn/diagrams.tsx, src/lib/curriculum/types.ts, src/lib/curriculum/lessons/lesson-{58,59,60,61,62,63,64}.ts, scripts/{audit-figures.ts,r26-wave1-e2e.sh}.
+
+
+---
+Task ID: lc-round27
+Agent: Antigravity Pair Programmer
+Task: lc-round27 — Interactive Financial Canvas & Valuation Modeler + DuckDB Vectorized In-Process OLAP Engine + Domain Mastery Pack #10 ("DeFi & AMM Analytics")
+
+Work Log:
+- Item 1: Interactive Financial Canvas & Valuation Modeler (src/components/finance-canvas.tsx):
+  - DuPont 3-Way ROE Decomposition Tree: live interactive model breaking down ROE = Profit Margin x Asset Turnover x Financial Leverage with calculated sub-nodes.
+  - Dynamic DCF Valuation Sensitivity Modeler: interactive sensitivity modeling with sliders for WACC, Terminal Growth Rate (g), and Projection Horizon with live Enterprise Value, Equity Value, and implied share price.
+  - Executive Financial Ratio Cards: real-time KPI metrics for Gross Margin, Operating Margin, Current Ratio, Quick Ratio, Debt-to-Equity, and Cash Flow Yield.
+  - Preloaded Financial SQL Blueprints: Cash-to-Cash Cycle, Aging AR, Gross Margin Waterfall, and Capital Structure presets.
+  - Wired into src/app/page.tsx query results tab bar ("Finance Canvas").
+- Item 2: DuckDB Vectorized In-Process OLAP Engine (src/app/api/duckdb/route.ts, src/components/duckdb-lab.tsx):
+  - In-process DuckDB v1.4.4 instance dynamically connected with attached SQLite storefront dataset (ATTACH 'db/custom.db' AS store TYPE SQLITE; USE store;).
+  - Isolated connection pool with sequential query and physical EXPLAIN execution, normalizing BigInts and Dates.
+  - Physical Execution Plan Inspector: extracts and renders the full ASCII execution tree (ORDER_BY, HASH_GROUP_BY, HASH_JOIN, SQLITE_SCAN).
+  - Head-to-Head Performance Benchmarking: side-by-side execution timer measuring SQLite B-Tree vs DuckDB columnar SIMD execution.
+  - Built-in OLAP Presets: Multi-table aggregations, window rolling moving averages, and predicate pushdown filters.
+  - Wired into src/app/page.tsx visualizer tabs ("DuckDB OLAP").
+- Item 3: Domain Mastery Pack #10 — "DeFi & AMM Analytics" (src/lib/leetcode/content/dm-defi-*):
+  - 7 Tables & deterministic seed: protocols, pools, swaps, lp_positions, flash_loans, liquidations, oracles across Uniswap, Aave, Curve, MakerDAO, Chainlink, Nexus AMM, HyperLiquid.
+  - 60 SQL Problems (20 Easy / 20 Medium / 20 Hard) covering AMM invariants, impermanent loss, MEV sandwich attacks, liquidation bonuses, and oracle heartbeats.
+  - 60 MCQs (verified 4-way distinct outputs) + 60 scenario cases (120 steps).
+  - Registered in src/lib/leetcode/domain-packs.ts.
+- Verification & Platform Gates:
+  - scripts/dm-verify.ts: all 10 domain packs verified with 0 failures; dm-expected.ts generated with 2,147 verified keys.
+  - scripts/check-strip-counts.ts: all 208 companies, 8 domains, 6,656 problems verified green.
+  - tsc --noEmit: 0 TypeScript errors across the entire codebase.
+  - Cross-platform portability: db.ts updated with portable database URL resolver; .env set to relative path; Webpack production standalone build compiled and serving live on port 3000.
+
+Stage Summary:
+- All three roadmap deliverables completed, engine-verified, and live on http://localhost:3000. Domain Mastery now spans 10 full industry packs (1,800 verified items, 2,147 expected ledger keys). SeeQL features corporate financial modeling, vectorized OLAP querying, and on-chain DeFi mechanics.
+- Key files: src/components/finance-canvas.tsx, src/components/duckdb-lab.tsx, src/app/api/duckdb/route.ts, src/lib/leetcode/content/dm-defi-{schema,seed,queries,mcqs,cases}.ts, src/lib/leetcode/domain-packs.ts, src/lib/leetcode/content/dm-expected.ts, README.md, worklog.md.

@@ -2,7 +2,7 @@
 // the registry. Catches blank library cards before the browser does.
 import { readFileSync, readdirSync } from "node:fs";
 
-const root = "/home/z/my-project";
+const root = process.cwd();
 
 // 1) ids referenced by lesson blocks
 const taught = new Set<string>();
