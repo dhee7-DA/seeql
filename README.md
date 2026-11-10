@@ -44,10 +44,12 @@ Schema-grounded personal SQL tutor built directly into the exercise runner:
   - *Rung 3 (Walkthrough)*: Complete working SQL with step-by-step logic breakdown.
 - **Multi-Model Smart Cascade**: Prioritizes ultra-low latency `gemini-3.5-flash` with graceful fallbacks and optional Groq/OpenAI support.
 
-### 5. 🧠 Interactive Visualizer & Curriculum Sandbox
+### 5. 🧠 Interactive Visualizer, Curriculum & Personal Timetable
 - **AST Parsing & Visual Tree**: Live SQL abstract syntax tree generation and relational algebra flowcharts.
 - **Stage-by-Stage Query Execution**: Step-through breakdown showing row filtering, join grouping, and projection stages.
-- **Interview Prep Universe**: 208 company-specific kits across 8 domains with 6,656 LeetCode-style challenges, theory modules, and mock gauntlets.
+- **Complete 78-Lesson Curriculum (16 Modules)**: Spans Core SQL, Joins, CTEs, Finance, Window Functions Masterclass, Query Performance, Dimensional Modeling, 1M-Row Scale, and SQL Dialects & Portability.
+- **Adaptive Study Timetable & Focus Timer**: Pace-customizable weekly schedule (`30` / `60` / `90` / `120 min/day`), per-topic time budgets (`Theory` / `Quiz` / `SQL Lab`), and integrated Pomodoro timer saved locally.
+- **Interview Prep Universe**: 208 company-specific kits across 8 domains with 6,656 challenges, 437 LeetCode/DataFin problems, theory modules, and mock gauntlets.
 
 ---
 

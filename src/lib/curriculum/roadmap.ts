@@ -231,6 +231,36 @@ export const ROADMAP: RoadmapDay[] = [
   },
   {
     day: 31,
+    title: "Warehouse & star schemas",
+    focus: "OLAP vs OLTP, star schema grain contracts, surrogate keys and SCD Type 2 history.",
+    items: [L(65), L(66), L(67)],
+  },
+  {
+    day: 32,
+    title: "OLAP grammar & log triage",
+    focus: "Rollups, drill-downs, ratio-to-parent, messy log triage and the staging pattern.",
+    items: [L(68), L(69), L(70)],
+  },
+  {
+    day: 33,
+    title: "Conformed dimensions & warehouse gate",
+    focus: "Shared conformed vocabularies, the gated metrics mart — then the Module 14 exam.",
+    items: [L(71), L(72), E("dimensional")],
+  },
+  {
+    day: 34,
+    title: "Million-row firehose & scale rewrites",
+    focus: "Measure 1M dirty rows honestly, composite/covering indexes, rewrites and Module 15 exam.",
+    items: [L(73), L(74), L(75), E("messy-scale")],
+  },
+  {
+    day: 35,
+    title: "SQL dialects & portability",
+    focus: "Translate PostgreSQL, BigQuery, MySQL & SQLite idioms cleanly — then Module 16 exam.",
+    items: [L(76), L(77), L(78), E("dialects")],
+  },
+  {
+    day: 36,
     title: "Drill Yard graduation",
     focus: "The clearing house: every keyword drill bank answered correct, end to end.",
     items: [{ kind: "drills" }],
@@ -427,7 +457,7 @@ const STATS: SprintStats = {
   lessons: LESSONS.length,
   mcqs: LESSONS.reduce((a, l) => a + l.mcqs.length, 0),
   queries: LESSONS.reduce((a, l) => a + l.problems.length, 0),
-  exams: MODULES.length,
+  exams: MODULES.filter((m) => m.lessons.length > 0).length,
   fills: allFills().length,
   caseFiles: CASES.length,
   drills: DRILL_TOTAL,
@@ -438,4 +468,254 @@ const STATS: SprintStats = {
  *  numbers move by themselves when banks grow. */
 export function sprintStats(): SprintStats {
   return STATS;
+}
+
+// ---- Timetable & per-topic time allocation -------------------------------
+
+export interface TopicTimeSplit {
+  totalMin: number;
+  theoryMin: number;
+  quizMin: number;
+  labMin: number;
+}
+
+/** Break a single lesson, exam, or drill block into study phases. */
+export function topicTimeSplit(item: RoadmapItem): TopicTimeSplit {
+  if (item.kind === "exam") {
+    return { totalMin: EXAM_MINUTES, theoryMin: 0, quizMin: 8, labMin: 4 };
+  }
+  if (item.kind === "drills") {
+    return { totalMin: DRILL_DAY_MINUTES, theoryMin: 0, quizMin: 60, labMin: 60 };
+  }
+  const l = lessonById(item.lessonId);
+  const total = l?.minutes ?? 0;
+  if (total <= 0) return { totalMin: 0, theoryMin: 0, quizMin: 0, labMin: 0 };
+  const theoryMin = Math.max(3, Math.round(total * 0.25));
+  const quizMin = (l?.mcqs.length ?? 0) > 0 ? Math.max(3, Math.round(total * 0.25)) : 0;
+  const labMin = Math.max(1, total - theoryMin - quizMin);
+  return { totalMin: total, theoryMin, quizMin, labMin };
+}
+
+export interface ModuleTimeBudget {
+  moduleId: string;
+  num: number;
+  title: string;
+  level: string;
+  firstLessonId: string;
+  lessonNums: number[];
+  lessonCount: number;
+  mcqCount: number;
+  queryCount: number;
+  caseCount: number;
+  totalMinutes: number;
+  split: TopicTimeSplit;
+}
+
+const MODULE_BUDGETS: ModuleTimeBudget[] = MODULES.filter((m) => m.lessons.length > 0)
+  .sort((a, b) => a.num - b.num)
+  .map((m) => {
+    let totalMin = EXAM_MINUTES;
+    let theoryMin = 0;
+    let quizMin = 8;
+    let labMin = 4;
+    let mcqCount = 0;
+    let queryCount = 0;
+    let caseCount = 0;
+    for (const l of m.lessons) {
+      const sp = topicTimeSplit({ kind: "lesson", lessonId: l.id });
+      totalMin += sp.totalMin;
+      theoryMin += sp.theoryMin;
+      quizMin += sp.quizMin;
+      labMin += sp.labMin;
+      mcqCount += l.mcqs.length;
+      queryCount += l.problems.length;
+      caseCount += casesForLessonNum(l.num).length;
+    }
+    return {
+      moduleId: m.id,
+      num: m.num,
+      title: m.title,
+      level: m.level,
+      firstLessonId: m.lessons[0].id,
+      lessonNums: m.lessons.map((l) => l.num),
+      lessonCount: m.lessons.length,
+      mcqCount,
+      queryCount,
+      caseCount,
+      totalMinutes: totalMin,
+      split: { totalMin, theoryMin, quizMin, labMin },
+    };
+  });
+
+export function moduleTimeBudgets(): ModuleTimeBudget[] {
+  return MODULE_BUDGETS;
+}
+
+export interface ScheduledTask {
+  kind: RoadmapItem["kind"];
+  label: string;
+  sublabel: string;
+  item: RoadmapItem;
+  sprintDay: number;
+  moduleId: string | null;
+  moduleTitle: string;
+  minutes: number;
+  split: TopicTimeSplit;
+  done: boolean;
+  locked: boolean;
+}
+
+export interface TimetableSession {
+  sessionNum: number;
+  weekNum: number;
+  dateIso: string;
+  totalMinutes: number;
+  tasks: ScheduledTask[];
+  allDone: boolean;
+  containsCurrentDay: boolean;
+}
+
+function addDaysIso(startIso: string, offsetDays: number): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(startIso);
+  const now = new Date();
+  const baseMs = m
+    ? Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+    : Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const d = new Date(baseMs + offsetDays * 86_400_000);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Re-pack all 36 roadmap days (78 lessons + 14 exams + drills) into a realistic
+ * calendar timetable matching the learner's chosen daily minute budget.
+ */
+export function buildTimetable(
+  dailyBudgetMin: number,
+  startDateIso: string,
+  prog: ProgSlice,
+): TimetableSession[] {
+  const budget = Math.max(15, dailyBudgetMin);
+  const curIdx = currentDayIndex(prog);
+  const cleared = sprintCleared(prog);
+
+  // Flatten roadmap items in pedagogical order, splitting the 120m drill yard
+  // across chunks when the daily budget is smaller than 120 min.
+  const queue: ScheduledTask[] = [];
+  ROADMAP.forEach((d, dayIdx) => {
+    const dayIsLocked = !cleared && dayIdx > curIdx;
+    for (const item of d.items) {
+      if (item.kind === "drills" && budget < DRILL_DAY_MINUTES) {
+        const parts = Math.ceil(DRILL_DAY_MINUTES / budget);
+        const perPart = Math.round(DRILL_DAY_MINUTES / parts);
+        const done = itemDone(item, prog);
+        for (let p = 0; p < parts; p++) {
+          const split: TopicTimeSplit = {
+            totalMin: perPart,
+            theoryMin: 0,
+            quizMin: Math.round(perPart / 2),
+            labMin: perPart - Math.round(perPart / 2),
+          };
+          queue.push({
+            kind: "drills",
+            label: `Drill Yard (${p + 1}/${parts})`,
+            sublabel: "Keyword drill banks · spacing & recall",
+            item,
+            sprintDay: d.day,
+            moduleId: null,
+            moduleTitle: "Graduation Drills",
+            minutes: perPart,
+            split,
+            done,
+            locked: dayIsLocked,
+          });
+        }
+        continue;
+      }
+
+      const split = topicTimeSplit(item);
+      const done = itemDone(item, prog);
+      if (item.kind === "lesson") {
+        const l = lessonById(item.lessonId);
+        if (!l) continue;
+        const mod = MODULES.find((m) => m.lessons.some((x) => x.id === l.id));
+        queue.push({
+          kind: "lesson",
+          label: `L${l.num}: ${l.title}`,
+          sublabel: `${l.mcqs.length} quiz · ${l.problems.length} SQL${casesForLessonNum(l.num).length > 0 ? ` · ${casesForLessonNum(l.num).length} cases` : ""}`,
+          item,
+          sprintDay: d.day,
+          moduleId: mod?.id ?? null,
+          moduleTitle: mod ? `M${mod.num}: ${mod.title}` : "Core",
+          minutes: split.totalMin,
+          split,
+          done,
+          locked: dayIsLocked,
+        });
+      } else if (item.kind === "exam") {
+        const mod = moduleById(item.moduleId);
+        queue.push({
+          kind: "exam",
+          label: `Module ${mod?.num ?? ""} Exam — ${mod?.title ?? item.moduleId}`,
+          sublabel: "8 MCQs · 4 SQL fills · pass at 9/12",
+          item,
+          sprintDay: d.day,
+          moduleId: item.moduleId,
+          moduleTitle: mod ? `M${mod.num}: ${mod.title}` : "Exam",
+          minutes: split.totalMin,
+          split,
+          done,
+          locked: dayIsLocked,
+        });
+      } else {
+        queue.push({
+          kind: "drills",
+          label: "Drill Yard Graduation",
+          sublabel: `${DRILL_TOTAL} keyword drills end to end`,
+          item,
+          sprintDay: d.day,
+          moduleId: null,
+          moduleTitle: "Graduation Drills",
+          minutes: split.totalMin,
+          split,
+          done,
+          locked: dayIsLocked,
+        });
+      }
+    }
+  });
+
+  const sessions: TimetableSession[] = [];
+  let bucket: ScheduledTask[] = [];
+  let bucketMin = 0;
+
+  const flush = () => {
+    if (bucket.length === 0) return;
+    const sessionNum = sessions.length + 1;
+    const weekNum = Math.floor((sessionNum - 1) / 7) + 1;
+    const dateIso = addDaysIso(startDateIso, sessionNum - 1);
+    const currentSprintDay = ROADMAP[curIdx]?.day ?? -1;
+    sessions.push({
+      sessionNum,
+      weekNum,
+      dateIso,
+      totalMinutes: bucketMin,
+      tasks: bucket,
+      allDone: bucket.every((t) => t.done),
+      containsCurrentDay: bucket.some((t) => t.sprintDay === currentSprintDay),
+    });
+    bucket = [];
+    bucketMin = 0;
+  };
+
+  for (const task of queue) {
+    // Allow gentle +15% slack so lessons aren't unnecessarily orphaned onto an extra day
+    if (bucket.length > 0 && bucketMin + task.minutes > Math.round(budget * 1.15)) {
+      flush();
+    }
+    bucket.push(task);
+    bucketMin += task.minutes;
+  }
+  flush();
+
+  return sessions;
 }

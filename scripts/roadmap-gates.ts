@@ -4,6 +4,7 @@
 // exam + drills item logic, and the day summaries.
 import {
   ROADMAP,
+  buildTimetable,
   currentDayIndex,
   dayComplete,
   dayMinutes,
@@ -12,9 +13,11 @@ import {
   lessonById,
   lessonDone,
   moduleById,
+  moduleTimeBudgets,
   casesForLessonNum,
   sprintCleared,
   sprintStats,
+  topicTimeSplit,
   type ProgSlice,
 } from "../src/lib/curriculum/roadmap";
 import { CASES } from "../src/lib/curriculum/cases";
@@ -39,17 +42,17 @@ for (const d of ROADMAP) {
   }
 }
 ok(unresolved === 0, `all roadmap items resolve (${ROADMAP.length} days)`);
-ok(ROADMAP.length === 31, "exactly 31 days");
+ok(ROADMAP.length === 36, "exactly 36 days");
 const allLessons = ROADMAP.flatMap((d) => d.items).filter((i) => i.kind === "lesson");
-ok(allLessons.length === 64, `64 lesson items on the plan (${allLessons.length})`);
+ok(allLessons.length === 78, `78 lesson items on the plan (${allLessons.length})`);
 const seen = new Set(allLessons.map((i) => (i.kind === "lesson" ? i.lessonId : "")));
-ok(seen.size === 64, "no lesson repeated across days");
+ok(seen.size === 78, "no lesson repeated across days");
 
 // ---- 2. census ------------------------------------------------------------
 const s = sprintStats();
 console.log(`stats: days=${s.days} lessons=${s.lessons} mcqs=${s.mcqs} queries=${s.queries} exams=${s.exams} fills=${s.fills} caseFiles=${s.caseFiles} drills=${s.drills} minutes=${s.minutes} (~${Math.round(s.minutes / 60)}h)`);
-ok(s.days === 31 && s.lessons === 64 && s.mcqs === 951 && s.queries === 761, "census lessons/mcqs/queries");
-ok(s.exams === 11 && s.caseFiles === CASES.length && s.drills === 2799, "census exams/cases/drills");
+ok(s.days === 36 && s.lessons === 78 && s.mcqs === 1643 && s.queries === 951, "census lessons/mcqs/queries");
+ok(s.exams === 14 && s.caseFiles === CASES.length && s.drills === 2799, "census exams/cases/drills");
 
 // ---- 2b. module gauntlet banks (Keyword Mastery program) -------------------
 // Every gauntlet bank must carry the full module-end contract: 50 MCQs +
@@ -182,9 +185,26 @@ const d29 = daySummary(ROADMAP[28]);
 ok(d29.exams === 1 && d29.lessons === 0, "day 29 is the exam-only day");
 const d30 = daySummary(ROADMAP[29]);
 ok(d30.lessons === 1 && d30.exams === 1, "day 30 is the performance lesson + module exam");
-const d31 = daySummary(ROADMAP[30]);
-ok(d31.drills && d31.lessons === 0, "day 31 is the drills clearing house");
-console.log(`day minutes: 1=${dayMinutes(ROADMAP[0])} 23=${dayMinutes(ROADMAP[22])} 30=${dayMinutes(ROADMAP[29])} 31=${dayMinutes(ROADMAP[30])}`);
+const d35 = daySummary(ROADMAP[34]);
+ok(d35.lessons === 3 && d35.exams === 1, "day 35 covers L76-L78 dialects + exam");
+const d36 = daySummary(ROADMAP[35]);
+ok(d36.drills && d36.lessons === 0, "day 36 is the drills clearing house");
+console.log(`day minutes: 1=${dayMinutes(ROADMAP[0])} 23=${dayMinutes(ROADMAP[22])} 30=${dayMinutes(ROADMAP[29])} 36=${dayMinutes(ROADMAP[35])}`);
+
+// ---- 7. timetable & topic time split ----------------------------------------
+const budgets = moduleTimeBudgets();
+ok(budgets.length === 14, `14 taught modules have time budgets (got ${budgets.length})`);
+ok(
+  budgets.every((b) => b.totalMinutes === b.split.theoryMin + b.split.quizMin + b.split.labMin),
+  "every module time budget splits cleanly into theory + quiz + SQL lab",
+);
+const sp1 = topicTimeSplit({ kind: "lesson", lessonId: "lesson-01" });
+ok(sp1.totalMin === sp1.theoryMin + sp1.quizMin + sp1.labMin && sp1.totalMin > 0, "lesson-01 time split sums cleanly");
+const tt60 = buildTimetable(60, "2026-11-10", empty);
+const tt30 = buildTimetable(30, "2026-11-10", empty);
+ok(tt60.length > 0 && tt30.length > tt60.length, `30m/d (${tt30.length}d) spans more days than 60m/d (${tt60.length}d)`);
+const ttLessonTasks = tt60.flatMap((sess) => sess.tasks).filter((t) => t.kind === "lesson");
+ok(ttLessonTasks.length === 78, `timetable includes all 78 lessons (got ${ttLessonTasks.length})`);
 
 console.log(fails === 0 ? "\nALL GATE CHECKS PASS" : `\n${fails} CHECK(S) FAILED`);
 process.exit(fails === 0 ? 0 : 1);

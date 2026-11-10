@@ -9262,4 +9262,30 @@ Stage Summary:
 - Key files: Dockerfile, .dockerignore, package.json, src/lib/db.ts, src/app/api/{duckdb,query,mentor}/route.ts, README.md, worklog.md.
 
 
+---
+Task ID: lc-round31
+Agent: Antigravity Pair Programmer
+Task: lc-round31 — Complete 36-Day Timetable, Per-Topic Time Budgets (L1–L78), & Study Focus Timer
+
+Work Log:
+- Curriculum Roadmap Completeness (src/lib/curriculum/roadmap.ts):
+  - Extended `ROADMAP` from 31 days (L1–L64) to 36 days covering all 78 lessons across all 14 taught modules (including Days 31–35 for Module 14 Dimensional Modeling, Module 15 Million-Row Scale, Module 16 SQL Dialects & Portability, plus their 3 module exams) and Day 36 Drill Yard graduation.
+  - Fixed `STATS.exams` (`MODULES.filter(m => m.lessons.length > 0).length` = 14) to count actual taught module exams accurately.
+  - Added pure scheduling helpers: `topicTimeSplit()` (25% Theory & Diagrams / 25% Quiz / 50% SQL Lab & Cases), `moduleTimeBudgets()` across all 14 core modules (~25h total curriculum), and `buildTimetable()` dynamic calendar planner supporting customizable daily study paces (30 / 60 / 90 / 120 min/day) and UTC-safe date arithmetic.
+- Interactive Timetable & Focus Timer UI (src/components/learn/roadmap-track.tsx, src/components/learn/tools.ts):
+  - Added `Timetable & Topic Times` view mode alongside the `Winding Sprint Path (36d)` inside `RoadmapTrack`.
+  - Built `ModuleBudgetTable` displaying time breakdown (`Theory`, `Quiz`, `SQL Lab`, `Total`) for all 14 core modules plus post-sprint interview/domain daily allocation.
+  - Built `TimetableScheduleView` with daily pace buttons (`30 / 60 / 90 / 120 min/day`), start-date picker, dynamic completion projection, week filter rail, and per-task phase minute splits.
+  - Built `FocusTimerBar` (15m / 25m / 45m / 60m countdown presets + manual `+15m log`) persisted in `localStorage` (`seeql.timetable.v1`, included automatically in `port.ts` backup/restore).
+  - Updated sidebar tool label in `src/components/learn/tools.ts` to "Timetable & sprint".
+- Verification:
+  - Updated `scripts/roadmap-gates.ts` to assert 36 days, 78 lessons, 14 exams, module budgets, and dynamic timetable generation — `ALL GATE CHECKS PASS`.
+  - Re-ran `bun run build` cleanly for standalone deployment on port 3000.
+
+Stage Summary:
+- Learners now have a complete, pace-adaptive study timetable and exact per-topic time breakdown across all 78 lessons, 14 exams, and drills, backed by a persistent focus timer.
+- Key files: src/lib/curriculum/roadmap.ts, src/components/learn/roadmap-track.tsx, src/components/learn/tools.ts, scripts/roadmap-gates.ts, README.md, worklog.md.
+
+
+
 

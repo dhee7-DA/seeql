@@ -91,7 +91,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "overview", icon: LayoutDashboard, label: "Course overview", note: "progress & badges", short: "Overview", section: "core" },
   { kind: "readiness", icon: Gauge, label: "Readiness dashboard", note: "all 14 modules, one number", short: "Readiness", section: "core" },
   { kind: "pipeline", icon: Layers, label: "Query pipeline", note: "watch SELECT execute, phase by phase", short: "Pipeline", section: "toolbox" },
-  { kind: "roadmap", icon: Route, label: "30-day sprint", note: "the day-by-day roadmap", short: "Sprint", section: "toolbox" },
+  { kind: "roadmap", icon: Route, label: "Timetable & sprint", note: "study schedule & time per topic", short: "Timetable", section: "toolbox" },
   { kind: "seeq", icon: Ghost, label: "SeeQ playground", note: "dress & place your buddy", short: "SeeQ", section: "toolbox" },
   { kind: "daily", icon: CalendarDays, label: "Daily puzzle", note: "one a day — keep the streak", short: "Daily", section: "toolbox" },
   { kind: "frames", icon: Frame, label: "Window-frame playground", note: "watch the frame slide, live", short: "Frames", section: "toolbox" },
