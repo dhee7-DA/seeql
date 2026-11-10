@@ -26,7 +26,7 @@ import type { StateId } from "@/components/bloub/states";
 import { HeroDemo } from "@/components/landing/hero-demo";
 import { UniverseStrip } from "@/components/universe-strip";
 import { Icon3D, type Icon3DName } from "@/components/learn/ui/icon3d";
-import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
+import { LANDING_MODULES, LANDING_TOTALS } from "@/lib/generated/landing-summary";
 import { LEVELS } from "@/lib/curriculum/gamification";
 
 const NAV = [
@@ -36,9 +36,9 @@ const NAV = [
   { id: "seeq", label: "SeeQ" },
 ];
 
-const TOTAL_MCQ = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
-const TOTAL_PROBLEMS = LESSONS.reduce((a, l) => a + l.problems.length, 0);
-const TOTAL_FIGURES = LESSONS.reduce((a, l) => a + l.blocks.filter((b) => b.kind === "diagram").length, 0);
+const TOTAL_MCQ = LANDING_TOTALS.mcqs;
+const TOTAL_PROBLEMS = LANDING_TOTALS.problems;
+const TOTAL_FIGURES = LANDING_TOTALS.figures;
 
 function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -473,7 +473,7 @@ export function Landing({
       <section className="border-b border-zinc-800">
         <div className="mx-auto grid w-full max-w-5xl grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
           {[
-            [LESSONS.length, "lessons, start to capstone"],
+            [LANDING_TOTALS.lessons, "lessons, start to capstone"],
             [TOTAL_FIGURES, "interactive diagrams"],
             [TOTAL_MCQ, "quiz questions"],
             [TOTAL_PROBLEMS, "live-graded queries"],
@@ -574,10 +574,10 @@ export function Landing({
             <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-16">
               <h2 className="spade-display flex items-center gap-4 text-3xl text-zinc-100 sm:text-4xl">
                 <Icon3D name="cap" size={44} anim="bob" className="hidden sm:block" />
-                {MODULES.length} modules. One database.
+                {LANDING_TOTALS.modules} modules. One database.
               </h2>
               <p className="text-[15px] leading-[1.7] text-zinc-400 lg:pt-1.5">
-                {MODULES.length} modules on one real storefront database — foundations,
+                {LANDING_TOTALS.modules} modules on one real storefront database — foundations,
                 joins, set operations, subqueries, window functions, writes, schema and
                 the expert clinic. {TOTAL_MCQ} quiz questions, {TOTAL_PROBLEMS} graded
                 live queries, every one executed in your browser.
@@ -586,7 +586,7 @@ export function Landing({
           </Reveal>
           <Reveal delay={0.05}>
             <div className="spade-card mt-14 overflow-hidden rounded-xl">
-              {MODULES.map((m) => (
+              {LANDING_MODULES.map((m) => (
                 <div key={m.id}>
                   <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/70 px-4 py-2.5 sm:px-5">
                     <span className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-300">
@@ -609,7 +609,7 @@ export function Landing({
                         <span className="block truncate text-xs text-zinc-500">{l.blurb}</span>
                       </span>
                       <span className="tnum hidden shrink-0 font-mono text-[11px] text-zinc-500 sm:block">
-                        {l.mcqs.length} quiz · {l.problems.length} queries · {l.minutes} min
+                        {l.mcqCount} quiz · {l.problemCount} queries · {l.minutes} min
                       </span>
                       <ArrowRight className="h-4 w-4 shrink-0 text-zinc-600 transition-all group-hover:translate-x-0.5 group-hover:text-emerald-300" />
                     </button>
@@ -689,7 +689,7 @@ export function Landing({
                 <Icon3D name="trophy" size={72} anim="float" className="absolute bottom-10 right-8 hidden lg:block" />
                 <div className="flex flex-wrap items-baseline justify-between gap-4">
                   <h2 className="spade-display text-3xl text-zinc-100 sm:text-4xl">
-                    Free<span className="text-zinc-500">. {LESSONS.length} lessons, one price.</span>
+                    Free<span className="text-zinc-500">. {LANDING_TOTALS.lessons} lessons, one price.</span>
                   </h2>
                   <span className="spade-gold-chip rounded-sm px-3 py-1.5 text-[10px]">
                     No account. Rises at never.

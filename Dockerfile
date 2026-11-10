@@ -15,14 +15,13 @@ RUN bun install --frozen-lockfile
 # Copy application source
 COPY . .
 
-# Production build configuration
+# Production build configuration (apply 4GB heap limit strictly to build step)
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV DATABASE_URL="file:/app/db/custom.db"
 
 # Ensure healthy SQLite DB, generate Prisma client, and compile Webpack standalone output
-RUN bun run db:health && bun run build
+RUN NODE_OPTIONS="--max-old-space-size=4096" sh -c "bun run db:health && bun run build"
 
 # Ensure native Prisma & DuckDB modules are available inside standalone bundle
 RUN mkdir -p .next/standalone/node_modules .next/standalone/db \
@@ -40,4 +39,4 @@ ENV HOME="/tmp"
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD bun -e "fetch('http://localhost:' + (process.env.PORT || 3000) + '/api/db-health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
-CMD ["bun", ".next/standalone/server.js"]
+CMD ["bun", "--smol", ".next/standalone/server.js"]

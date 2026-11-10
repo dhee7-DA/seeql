@@ -242,18 +242,4 @@ export function CommandPalette() {
   );
 }
 
-/** Header chip that opens the palette — gives ⌘K a visible, tappable home. */
-export function SearchButton() {
-  return (
-    <button
-      onClick={() => window.dispatchEvent(new CustomEvent("seeql:palette"))}
-      aria-label="Search — open the command palette (Control K)"
-      title="Search everything — ⌘K"
-      className="flex min-h-[36px] cursor-pointer items-center gap-1.5 rounded-md border border-zinc-800 px-2.5 py-1.5 text-sm text-zinc-300 transition-colors hover:bg-zinc-900"
-    >
-      <Search className="h-3.5 w-3.5" />
-      <span className="hidden md:inline">Search</span>
-      <kbd className="hidden rounded border border-zinc-700 bg-zinc-900 px-1 font-mono text-[10px] text-zinc-500 md:inline">⌘K</kbd>
-    </button>
-  );
-}
+export { SearchButton } from "./header-controls";

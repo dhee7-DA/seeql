@@ -43,6 +43,7 @@ async function getDuckConn(): Promise<any> {
       ATTACH '${normalizedDbPath}' AS store (TYPE SQLITE, READ_ONLY);
       USE store;
       SET enable_external_access = false;
+      SET memory_limit = '96MB';
       `,
       (err: any) => {
         if (err) return reject(err);

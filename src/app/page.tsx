@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import dynamic from "next/dynamic";
 import { BloubBot } from "@/components/bloub/bloub-bot";
 import {
   AlertTriangle,
@@ -51,8 +52,6 @@ import { PlanView } from "@/components/plan-view";
 import { ParseTreeView } from "@/components/parse-tree-view";
 import { SchemaView } from "@/components/schema-view";
 import { ChartView } from "@/components/chart-view";
-import { FinanceCanvas } from "@/components/finance-canvas";
-import { DuckDbLab } from "@/components/duckdb-lab";
 import { MissionBoard } from "@/components/mission-board";
 import { QueryFlowSvg } from "@/components/query-flow-svg";
 import { RowFunnel } from "@/components/row-funnel";
@@ -60,8 +59,29 @@ import { StageInspector } from "@/components/stage-inspector";
 import { SampleGallery } from "@/components/sample-gallery";
 import { clauseAtOffset, findClauses, spanOf, type ClauseKind } from "@/lib/sql-clauses";
 import { Landing } from "@/components/landing";
-import { HeaderRank, HeaderTourButton, LearnApp } from "@/components/learn/learn-app";
-import { SearchButton } from "@/components/learn/command-palette";
+import { HeaderRank, HeaderTourButton, SearchButton } from "@/components/learn/header-controls";
+
+const LearnApp = dynamic(
+  () => import("@/components/learn/learn-app").then((m) => m.LearnApp),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="mx-auto w-full max-w-7xl px-4 py-12 font-mono text-xs text-zinc-500 sm:px-6">
+        Loading workspace…
+      </div>
+    ),
+  },
+);
+
+const FinanceCanvas = dynamic(
+  () => import("@/components/finance-canvas").then((m) => m.FinanceCanvas),
+  { ssr: false },
+);
+
+const DuckDbLab = dynamic(
+  () => import("@/components/duckdb-lab").then((m) => m.DuckDbLab),
+  { ssr: false },
+);
 import { UniverseStrip } from "@/components/universe-strip";
 import { SeeqBuddy } from "@/components/learn/seeq-buddy";
 import { useProgress } from "@/lib/curriculum/progress";

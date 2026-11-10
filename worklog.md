@@ -9338,6 +9338,33 @@ Stage Summary:
 - Key files: .dockerignore, .github/workflows/publish-image.yml, worklog.md.
 
 
+---
+Task ID: lc-round35
+Agent: Antigravity Pair Programmer
+Task: lc-round35 — 512 MB Cloud RAM Optimization (SSR Bundle Slimming: 40.1 MB → 0.46 MB + bun --smol)
+
+Work Log:
+- Root Cause Diagnosed:
+  - Render Free Tier (512 MB cgroup) hit OOM at boot because `server/app/page.js` was 40.1 MB (statically pulling all 78 lessons, 208 company kits, 10 domain packs, and command palette index into `/` SSR) with `preloadEntriesOnStart: true`.
+- Client-Side Isolation & Summary Codegen (src/app/page.tsx, src/components/landing.tsx, src/components/learn/header-controls.tsx, scripts/gen-universe-counts.ts):
+  - Extracted lightweight `HeaderRank`, `HeaderTourButton`, and `SearchButton` into `src/components/learn/header-controls.tsx` with re-exports preserved on `learn-app.tsx` and `command-palette.tsx`.
+  - Converted `LearnApp`, `DuckDbLab`, and `FinanceCanvas` in `src/app/page.tsx` to `next/dynamic(..., { ssr: false })` so heavy curriculum modules stay purely in browser memory and never load into Render's server RAM.
+  - Extended `scripts/gen-universe-counts.ts` to emit lightweight build-time `src/lib/generated/landing-summary.ts` (LANDING_TOTALS + LANDING_MODULES metadata) and updated `Landing` to consume it instead of importing all 78 full lesson blocks/MCQs.
+- Runtime Memory Hardening (next.config.ts, Dockerfile, src/app/api/duckdb/route.ts):
+  - Disabled `experimental.preloadEntriesOnStart` in `next.config.ts`.
+  - Moved `NODE_OPTIONS="--max-old-space-size=4096"` strictly inline to the Docker build `RUN` command and switched container startup to `CMD ["bun", "--smol", ".next/standalone/server.js"]`.
+  - Set `SET memory_limit = '96MB';` on DuckDB connection.
+- Verification:
+  - `bun run build`: clean exit 0; static page generation dropped from 13.4s to 2.7s; `server/app/page.js` dropped from **40.1 MB → 0.46 MB** (-98.8%); total standalone `.next/server` shrunk from **51.6 MB → 12.24 MB**.
+  - Live `bun --smol` verification across all 9 checks (`/`, `/api/db-health`, `/api/stats`, `/api/duckdb`, security blocks, `/api/query`, `/api/dm-sql`, `/api/mentor`) passed 100% with **128.3 MB** WorkingSet RAM.
+  - `check:strip` and `scripts/roadmap-gates.ts` (`ALL GATE CHECKS PASS`) green.
+
+Stage Summary:
+- Server SSR memory spike eliminated (`40.1 MB` → `0.46 MB`), bringing peak runtime memory to ~128 MB so Render's 512 MB `$0/month` Free Tier runs smoothly.
+- Key files: Dockerfile, next.config.ts, scripts/gen-universe-counts.ts, src/lib/generated/landing-summary.ts, src/components/landing.tsx, src/components/learn/header-controls.tsx, src/components/learn/{learn-app,command-palette}.tsx, src/app/page.tsx, src/app/api/duckdb/route.ts, worklog.md.
+
+
+
 
 
 
