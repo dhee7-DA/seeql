@@ -1,3 +1,13 @@
+---
+title: SeeQL
+emoji: 🔍
+colorFrom: green
+colorTo: gray
+sdk: docker
+app_port: 3000
+pinned: false
+---
+
 # SeeQL 🔍 📊
 
 > **Interactive SQL Visualization, Vectorized OLAP Analytics, and Financial Engineering Platform**
@@ -111,16 +121,13 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
-## ☁️ Cloud Deployment (Docker / Railway / Render)
+## ☁️ Cloud Deployment (Hugging Face Spaces · Railway · Render)
 
-SeeQL includes a production [`Dockerfile`](Dockerfile) configured with **Node 20 + Bun + Debian glibc** (supporting `bun:sqlite`, Prisma, and DuckDB native C++ bindings out of the box):
+SeeQL includes a non-root hardened [`Dockerfile`](Dockerfile) configured with **Node 20 + Bun + Debian glibc** (supporting `bun:sqlite`, Prisma, and DuckDB native C++ bindings out of the box):
 
-1. Connect your GitHub fork/repo (`dhee7-DA/seeql`) to **Railway** or **Render** (Docker service).
-2. Set environment variables in the cloud dashboard:
-   - `GEMINI_API_KEY`: Your free key from Google AI Studio (optional, powers AI Mentor).
-   - `NEXT_PUBLIC_SITE_URL`: Your assigned domain (e.g., `https://seeql.up.railway.app`) for social preview cards.
-3. Configure healthcheck path as `/api/db-health`.
-4. Deploy! DuckDB filesystem access is automatically sandboxed (`enable_external_access = false`), dangerous SQLite directives are disabled, and `/api/mentor` includes IP rate limiting.
+- **Forever Free (16 GB RAM, 2 vCPU):** Create a Docker Space on [Hugging Face Spaces](https://huggingface.co/spaces) (`sdk: docker`, `app_port: 3000` is preconfigured in this README) and add `GEMINI_API_KEY` under Space **Secrets**.
+- **Railway / Render:** Connect `dhee7-DA/seeql` as a Docker service, add **`GEMINI_API_KEY`** + **`NEXT_PUBLIC_SITE_URL`**, and set Healthcheck Path to **`/api/db-health`**.
+- **Built-In Hardening:** Non-root UID 1000 compatible (`HOME=/tmp`, writable `db/`), DuckDB external filesystem locked (`enable_external_access = false`), dangerous SQLite directives blocked, and `/api/mentor` IP rate-limited.
 
 ---
 

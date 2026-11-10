@@ -9303,6 +9303,25 @@ Stage Summary:
 - Key files: src/components/learn/lesson-view.tsx, worklog.md.
 
 
+---
+Task ID: lc-round33
+Agent: Antigravity Pair Programmer
+Task: lc-round33 — Forever-Free Non-Root Docker Container Compatibility (Hugging Face Spaces 16GB Free Tier)
+
+Work Log:
+- Container Hardening (Dockerfile):
+  - Added `ENV HOME="/tmp"` so non-root UID 1000 containers (such as Hugging Face Spaces Docker) can cache DuckDB's `sqlite` extension cleanly without permission failures.
+  - Added `chmod -R a+rX /app && chmod -R 777 /app/db /app/.next/standalone/db` so unprivileged container users can read the bundled assets and run SQLite sandbox queries.
+- Hugging Face Spaces Config & Docs (README.md):
+  - Added HF Spaces Docker metadata frontmatter (`sdk: docker`, `app_port: 3000`) cleanly to top of `README.md`.
+  - Documented 16 GB RAM forever-free Hugging Face Spaces Docker deployment alongside Railway/Render.
+
+Stage Summary:
+- Repository is 100% ready to deploy onto Hugging Face Spaces Docker (forever free, 16 GB RAM, zero credit card, zero 30-day limit).
+- Key files: Dockerfile, README.md, worklog.md.
+
+
+
 
 
 
