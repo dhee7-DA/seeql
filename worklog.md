@@ -9287,5 +9287,22 @@ Stage Summary:
 - Key files: src/lib/curriculum/roadmap.ts, src/components/learn/roadmap-track.tsx, src/components/learn/tools.ts, scripts/roadmap-gates.ts, README.md, worklog.md.
 
 
+---
+Task ID: lc-round32
+Agent: Antigravity Pair Programmer
+Task: lc-round32 — In-Lesson Cases Tab + Progressive Next-Step Flow (Learn -> Quiz -> Practice -> Cases)
+
+Work Log:
+- Lesson UX Upgrade (src/components/learn/lesson-view.tsx):
+  - Added dedicated `Cases · X/N rebuilt` tab inside every `LessonView` whenever `casesForLessonNum(lesson.num)` has mapped case files (e.g., 17 for L1, 46 for L10, 50 for L58), reusing `CaseFileCard` with difficulty filtering and 5-per-page pagination.
+  - Added progressive next-step footer CTAs at the bottom of `Learn`, `Deep dive`, `Quiz`, and `Practice` tabs so learners flow smoothly from theory $\rightarrow$ MCQs $\rightarrow$ graded SQL problems (`Practice`) $\rightarrow$ real-world stakeholder `Cases` with automatic scroll-to-top.
+  - Added informative fallback state inside `Practice` when a conceptual lesson has 0 standalone query problems.
+
+Stage Summary:
+- Topic-mapped case files and SQL problems are now both directly accessible inside each lesson tab strip and surfaced at the end of every tab.
+- Key files: src/components/learn/lesson-view.tsx, worklog.md.
+
+
+
 
 

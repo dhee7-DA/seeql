@@ -13,6 +13,7 @@ import {
   Cog,
   Database,
   Dumbbell,
+  FileStack,
   Lightbulb,
   Microscope,
   Sparkles,
@@ -22,6 +23,8 @@ import {
   X,
 } from "lucide-react";
 import type { Block, DeepBlock, Lesson } from "@/lib/curriculum/types";
+import type { CaseStudy } from "@/lib/curriculum/cases/types";
+import { casesForLessonNum } from "@/lib/curriculum/roadmap";
 import { reportMentorFailure } from "@/lib/mentor-context";
 import { seeqReact } from "./seeq-mood";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -35,9 +38,10 @@ import { McqCard } from "./mcq";
 import { ProblemCard } from "./problem-runner";
 import { ResultGrid } from "./result-grid";
 import { DrillYard } from "./drill-yard";
+import { CaseFileCard } from "./case-files";
 import { celebrate } from "./celebrate";
 
-type Tab = "learn" | "deep" | "quiz" | "practice" | "drills";
+type Tab = "learn" | "deep" | "quiz" | "practice" | "cases" | "drills";
 
 const DIALECT_META: Record<string, { label: string; pill: string }> = {
   postgres: { label: "PostgreSQL", pill: "border-teal-400/40 bg-teal-400/10 text-teal-300" },
@@ -652,10 +656,96 @@ function DeepBlockView({ b }: { b: DeepBlock }) {
   }
 }
 
+function LessonCasesTab({ cases, onSolved }: { cases: CaseStudy[]; onSolved: () => void }) {
+  const xpEvents = useProgress((s) => s.xpEvents);
+  const [tier, setTier] = useState<"all" | "easy" | "medium" | "hard">("all");
+  const [page, setPage] = useState(0);
+  const perPage = 5;
+
+  const solvedCount = useMemo(
+    () => cases.filter((c) => xpEvents[`case:${c.id}`] !== undefined).length,
+    [cases, xpEvents],
+  );
+  const filtered = useMemo(
+    () => (tier === "all" ? cases : cases.filter((c) => c.tier === tier)),
+    [cases, tier],
+  );
+  const pageCount = Math.max(1, Math.ceil(filtered.length / perPage));
+  const safePage = Math.min(page, pageCount - 1);
+  const visible = filtered.slice(safePage * perPage, (safePage + 1) * perPage);
+
+  return (
+    <div className="mt-5 max-w-3xl space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-zinc-500">
+          Real stakeholder memos mapped to this topic — rebuild the missing query pieces from the chip bank (
+          {solvedCount}/{cases.length} rebuilt).
+        </p>
+        <div className="flex items-center gap-1">
+          {(["all", "easy", "medium", "hard"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => {
+                setTier(t);
+                setPage(0);
+              }}
+              className={cn(
+                "rounded border px-2 py-0.5 font-mono text-[10px] capitalize transition-colors",
+                tier === t
+                  ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+                  : "border-zinc-800 text-zinc-500 hover:text-zinc-300",
+              )}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {visible.length === 0 ? (
+        <p className="rounded-lg border border-zinc-800 bg-zinc-950/60 p-4 text-xs text-zinc-500">
+          No {tier} case files for this lesson — switch filter above.
+        </p>
+      ) : (
+        visible.map((cs) => <CaseFileCard key={cs.id} cs={cs} onSolved={onSolved} />)
+      )}
+
+      {pageCount > 1 && (
+        <div className="flex items-center justify-between border-t border-zinc-800/80 pt-3">
+          <span className="tnum font-mono text-xs text-zinc-500">
+            Showing {safePage * perPage + 1}–{Math.min((safePage + 1) * perPage, filtered.length)} of {filtered.length}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <button
+              disabled={safePage === 0}
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              className="rounded border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 disabled:opacity-40"
+            >
+              ← Prev
+            </button>
+            <button
+              disabled={safePage >= pageCount - 1}
+              onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+              className="rounded border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 disabled:opacity-40"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonusChecked?: () => void }) {
   const [tab, setTab] = useState<Tab>("learn");
   const store = useProgress();
   const bonusRef = useRef(false);
+
+  const switchTab = (next: Tab) => {
+    setTab(next);
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const quizStats = useMemo(() => {
     const first = lesson.mcqs.every((m) => store.mcqAttempts[m.id]?.firstTry);
@@ -663,6 +753,8 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
     return { allChecked, first, allCorrect: lesson.mcqs.every((m) => store.mcqAttempts[m.id]?.correct) };
   }, [lesson, store.mcqAttempts]);
 
+  const lessonCases = useMemo(() => casesForLessonNum(lesson.num), [lesson.num]);
+  const casesSolvedCount = lessonCases.filter((c) => store.xpEvents[`case:${c.id}`] !== undefined).length;
   const solvedCount = lesson.problems.filter((p) => store.xpEvents[`solve:${p.id}`] !== undefined).length;
   const complete = quizStats.allCorrect && solvedCount === lesson.problems.length;
 
@@ -698,6 +790,16 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
       icon: TerminalSquare,
       note: `${solvedCount}/${lesson.problems.length} solved`,
     },
+    ...(lessonCases.length > 0
+      ? [
+          {
+            id: "cases" as Tab,
+            label: "Cases",
+            icon: FileStack,
+            note: `${casesSolvedCount}/${lessonCases.length} rebuilt`,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -839,16 +941,36 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
               </p>
             </Callout>
           )}
-          <div className="sheen mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
+          <div className="sheen mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
             <p className="text-sm text-zinc-400">
-              Ready to prove it? Take the quiz, then solve the practice queries.
+              Next up: {lesson.mcqs.length} MCQs
+              {lesson.problems.length > 0 ? `, ${lesson.problems.length} graded SQL problems` : ""}
+              {lessonCases.length > 0 ? `, and ${lessonCases.length} case files` : ""}.
             </p>
-            <button
-              onClick={() => setTab("quiz")}
-              className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
-            >
-              Take the quiz →
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              {lesson.problems.length > 0 && (
+                <button
+                  onClick={() => switchTab("practice")}
+                  className="rounded-md border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 transition-colors hover:border-zinc-500"
+                >
+                  SQL Problems ({lesson.problems.length})
+                </button>
+              )}
+              {lessonCases.length > 0 && (
+                <button
+                  onClick={() => switchTab("cases")}
+                  className="rounded-md border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 transition-colors hover:border-zinc-500"
+                >
+                  Cases ({lessonCases.length})
+                </button>
+              )}
+              <button
+                onClick={() => switchTab("quiz")}
+                className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
+              >
+                Take the quiz →
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -865,7 +987,7 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
           <div className="sheen mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
             <p className="text-sm text-zinc-400">Depth banked. Now make it stick — take the quiz.</p>
             <button
-              onClick={() => setTab("quiz")}
+              onClick={() => switchTab("quiz")}
               className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
             >
               Take the quiz →
@@ -886,6 +1008,33 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
           {lesson.mcqs.map((m) => (
             <McqCard key={m.id} mcq={m} onAnswered={checkBonus} />
           ))}
+          <div className="sheen mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
+            <p className="text-sm text-zinc-400">
+              {lesson.problems.length > 0
+                ? `Quiz done? Now write real queries in Practice (${solvedCount}/${lesson.problems.length} solved).`
+                : lessonCases.length > 0
+                  ? `Quiz done? Rebuild real queries in Cases (${casesSolvedCount}/${lessonCases.length} rebuilt).`
+                  : "Quiz done? Try Drills or advance to the next lesson."}
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              {lessonCases.length > 0 && (
+                <button
+                  onClick={() => switchTab("cases")}
+                  className="rounded-md border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 transition-colors hover:border-zinc-500"
+                >
+                  Open Case files ({lessonCases.length})
+                </button>
+              )}
+              {lesson.problems.length > 0 && (
+                <button
+                  onClick={() => switchTab("practice")}
+                  className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
+                >
+                  Solve {lesson.problems.length} SQL problems →
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -898,13 +1047,36 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
       {tab === "practice" && (
         <div className="mt-5 max-w-3xl space-y-5">
           <p className="text-sm text-zinc-500">
-            Write real SQL against the live storefront database. Your result is compared with the reference answer —
+            Write real SQL against the live storefront database. Your result is compared with the reference answer —{" "}
             {solvedCount}/{lesson.problems.length} solved so far.
           </p>
-          {lesson.problems.map((p, i) => (
-            <ProblemCard key={p.id} problem={p} index={i + 1} onSolved={checkBonus} />
-          ))}
+          {lesson.problems.length === 0 ? (
+            <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4 text-sm text-zinc-400">
+              This conceptual lesson teaches syntax mastery through MCQs, Keyword Drills, and Case Files rather than standalone editor problems.
+            </div>
+          ) : (
+            lesson.problems.map((p, i) => (
+              <ProblemCard key={p.id} problem={p} index={i + 1} onSolved={checkBonus} />
+            ))
+          )}
+          {lessonCases.length > 0 && (
+            <div className="sheen mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
+              <p className="text-sm text-zinc-400">
+                Want real stakeholder briefs? {lessonCases.length} Case Files map directly to Lesson {lesson.num}.
+              </p>
+              <button
+                onClick={() => switchTab("cases")}
+                className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
+              >
+                Open {lessonCases.length} Case files →
+              </button>
+            </div>
+          )}
         </div>
+      )}
+
+      {tab === "cases" && lessonCases.length > 0 && (
+        <LessonCasesTab cases={lessonCases} onSolved={checkBonus} />
       )}
     </div>
   );
