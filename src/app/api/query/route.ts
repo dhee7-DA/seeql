@@ -165,6 +165,19 @@ export async function POST(req: NextRequest) {
     }
 
     const statementType = statementTypeOf(sql);
+    if (
+      ["ATTACH", "DETACH", "VACUUM"].includes(statementType) ||
+      /\b(load_extension|writable_schema|vacuum\s+into)\b/i.test(sql) ||
+      (statementType === "PRAGMA" && /=/.test(sql))
+    ) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "System-level file and configuration directives are disabled in the web sandbox.",
+        } satisfies ExecResponse,
+        { status: 200 },
+      );
+    }
     const isRead = ["SELECT", "WITH", "EXPLAIN", "PRAGMA", "VALUES"].includes(statementType);
 
     await ensureDatabase();

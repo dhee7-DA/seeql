@@ -13,6 +13,28 @@ import { NextRequest, NextResponse } from "next/server";
 const MAX_MESSAGE_CHARS = 4_000;
 const MAX_HISTORY = 12; // messages sent to the model (excluding system)
 const MAX_SQL_CHARS = 2_000;
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX_REQ = 20;
+const ipHits = new Map<string, number[]>();
+
+function isRateLimited(req: NextRequest): boolean {
+  const fwd = req.headers.get("x-forwarded-for");
+  const ip = (fwd ? fwd.split(",")[0] : req.headers.get("x-real-ip") ?? "local").trim();
+  const now = Date.now();
+  const prev = (ipHits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  if (prev.length >= RATE_MAX_REQ) {
+    ipHits.set(ip, prev);
+    return true;
+  }
+  prev.push(now);
+  ipHits.set(ip, prev);
+  if (ipHits.size > 500) {
+    for (const [k, v] of ipHits.entries()) {
+      if (v.every((t) => now - t >= RATE_WINDOW_MS)) ipHits.delete(k);
+    }
+  }
+  return false;
+}
 
 interface ChatMsg {
   role: "user" | "assistant";
@@ -188,6 +210,12 @@ async function callOpenAICompatible(
 
 export async function POST(req: NextRequest) {
   try {
+    if (isRateLimited(req)) {
+      return NextResponse.json(
+        { ok: false, error: "Too many mentor requests — take a 30-second breather and try again." },
+        { status: 429 },
+      );
+    }
     const body = (await req.json()) as { messages?: unknown; context?: MentorContextBody };
     const history = clampHistory(body.messages);
     if (history.length === 0) {

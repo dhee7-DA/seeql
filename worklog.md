@@ -9236,3 +9236,30 @@ Stage Summary:
 - Key files: src/components/finance-canvas.tsx, src/app/layout.tsx, worklog.md.
 
 
+---
+Task ID: lc-round30
+Agent: Antigravity Pair Programmer
+Task: lc-round30 — Pre-Deployment Hardening (Production Dockerfile, Cross-Platform Build, DuckDB/SQLite Locks, & AI Rate Limiter)
+
+Work Log:
+- Cloud Container & Build Pipeline (Dockerfile, .dockerignore, package.json, src/lib/db.ts):
+  - Created Dockerfile based on `node:20-bookworm-slim` + Bun + OpenSSL + libstdc++6 so Prisma, `bun:sqlite`, and native DuckDB C++ binaries operate reliably in Linux cloud environments.
+  - Configured Docker HEALTHCHECK targeting `/api/db-health`.
+  - Updated `package.json`: set `"build"` to `bunx prisma generate && bunx next build --webpack` (eliminating Turbopack DuckDB panic) with cross-platform Node/Bun `fs.cpSync` asset copying and `trustedDependencies` for native postinstall execution (`duckdb`, `@prisma/client`, `prisma`, `sharp`).
+  - Refactored `src/lib/db.ts` (`resolveDbFilePath`) to normalize relative SQLite paths cleanly across OS/standalone directories and suppress noisy query logging in production.
+- Public Security Hardening:
+  - `src/app/api/duckdb/route.ts`: Attached SQLite storefront as `READ_ONLY`, applied `SET enable_external_access = false;` to prevent arbitrary filesystem reads (`read_csv`, etc.), and restricted execution to single read-only OLAP queries (`SELECT`, `WITH`, `EXPLAIN`, `DESCRIBE`, `SHOW`, `SUMMARIZE`, `VALUES`).
+  - `src/app/api/query/route.ts`: Blocked system-level SQLite directives (`ATTACH`, `DETACH`, `VACUUM INTO`, `load_extension`, writable `PRAGMA`) while keeping lesson/sandbox DML working.
+  - `src/app/api/mentor/route.ts`: Added sliding-window IP rate limiter (`20 req/min`) to protect Gemini quota against automated traffic.
+- Documentation & Verification:
+  - Updated `README.md` with Docker/Railway/Render deployment steps and fixed quickstart numbering.
+  - Executed full `bun run build` cleanly (0 warnings, Webpack + static pages + standalone copy OK).
+  - Executed live verification script against `http://localhost:3000`: `/` 200 OK, `/api/db-health` healthy (34 tables, 103 orders), `/api/stats` 750 rows, `/api/duckdb` read works & `read_csv('.env')`/`DROP TABLE` blocked, `/api/query` `ATTACH` blocked & valid read passes, `/api/dm-sql` (`bun:sqlite`) passes, `/api/mentor` Gemini passes.
+  - Verified `bun run check:strip` (208 companies, 6,656 problems) and `bun scripts/dm-verify.ts` (10 packs, 2,147 keys).
+
+Stage Summary:
+- Application hardened for public cloud deployment with container recipe, cross-platform Webpack build, sandbox filesystem isolation, and quota protection. Live standalone server healthy on port 3000.
+- Key files: Dockerfile, .dockerignore, package.json, src/lib/db.ts, src/app/api/{duckdb,query,mentor}/route.ts, README.md, worklog.md.
+
+
+

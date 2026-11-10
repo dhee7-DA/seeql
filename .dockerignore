@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+*.log
+dev.log
+server.log
+download
+tests
+skills
+scripts/mascot-research
+tool-results
+

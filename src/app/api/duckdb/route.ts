@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import path from "node:path";
 import fs from "node:fs";
+import { resolveDbFilePath } from "@/lib/db";
+import { ensureDatabase } from "@/lib/sample-db";
+import { hasMultipleStatements } from "@/lib/sql-statements";
 
 export const dynamic = "force-dynamic";
 
-// Singleton DuckDB connection with attached SQLite storefront
+const ALLOWED_DUCKDB_TYPES = new Set(["SELECT", "WITH", "EXPLAIN", "DESCRIBE", "SHOW", "SUMMARIZE", "VALUES"]);
+const MAX_SQL_LENGTH = 20_000;
+
+function firstKeywordOf(sql: string): string {
+  const stripped = sql.replace(/^(\s*(?:--[^\n]*\n|\/\*[\s\S]*?\*\/)+\s*)*/, "");
+  return (stripped.match(/^[a-zA-Z]+/)?.[0] ?? "UNKNOWN").toUpperCase();
+}
+
+// Singleton DuckDB connection with attached read-only SQLite storefront
 let duckConn: any = null;
 
 async function getDuckConn(): Promise<any> {
@@ -12,12 +22,14 @@ async function getDuckConn(): Promise<any> {
     return duckConn;
   }
 
+  await ensureDatabase();
+
   // Dynamically load duckdb so build-time static analyzers skip binary inspection
   // @ts-ignore
   const duckdbMod = await import("duckdb");
   const duckdb = duckdbMod.default || duckdbMod;
 
-  const dbPath = path.resolve(process.cwd(), "db/custom.db");
+  const dbPath = resolveDbFilePath();
   const normalizedDbPath = dbPath.replace(/\\/g, "/");
 
   const instance = new duckdb.Database(":memory:");
@@ -28,8 +40,9 @@ async function getDuckConn(): Promise<any> {
       `
       INSTALL sqlite;
       LOAD sqlite;
-      ATTACH '${normalizedDbPath}' AS store (TYPE SQLITE);
+      ATTACH '${normalizedDbPath}' AS store (TYPE SQLITE, READ_ONLY);
       USE store;
+      SET enable_external_access = false;
       `,
       (err: any) => {
         if (err) return reject(err);
@@ -55,9 +68,28 @@ export async function POST(req: NextRequest) {
       compareWithSqlite?: boolean;
     };
 
-    const sql = body.sql?.trim();
-    if (!sql) {
+    const rawSql = body.sql?.trim();
+    if (!rawSql) {
       return NextResponse.json({ ok: false, error: "Empty SQL query." }, { status: 400 });
+    }
+    if (rawSql.length > MAX_SQL_LENGTH) {
+      return NextResponse.json({ ok: false, error: "Query too long (20k character limit)." }, { status: 400 });
+    }
+
+    const sql = rawSql.replace(/;+\s*$/, "");
+    if (hasMultipleStatements(sql)) {
+      return NextResponse.json(
+        { ok: false, error: "Only one analytical query can be run at a time." },
+        { status: 400 }
+      );
+    }
+
+    const kw = firstKeywordOf(sql);
+    if (!ALLOWED_DUCKDB_TYPES.has(kw)) {
+      return NextResponse.json(
+        { ok: false, error: `DuckDB OLAP Lab is read-only. Statement type '${kw}' is not permitted.` },
+        { status: 403 }
+      );
     }
 
     const conn = await getDuckConn();
@@ -96,7 +128,7 @@ export async function POST(req: NextRequest) {
     let comparison: Record<string, unknown> | null = null;
     if (body.compareWithSqlite) {
       try {
-        const sqlitePath = path.resolve(process.cwd(), "db/custom.db");
+        const sqlitePath = resolveDbFilePath();
         if (fs.existsSync(sqlitePath)) {
           // Dynamically load bun:sqlite if available in runtime environment
           // @ts-ignore
@@ -146,4 +178,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

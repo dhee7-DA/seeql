@@ -91,7 +91,7 @@ Schema-grounded personal SQL tutor built directly into the exercise runner:
    bun run db:health
    bun run db:generate
    ```
-4. Verify domain pack integrity:
+5. Verify domain pack integrity:
    ```bash
    bun scripts/dm-verify.ts
    ```
@@ -99,13 +99,26 @@ Schema-grounded personal SQL tutor built directly into the exercise runner:
 ### Running Locally
 To launch the optimized standalone server on port 3000:
 ```bash
-# Build standalone bundle
+# Build standalone bundle (uses Webpack + Bun)
 bun run build
 
 # Start server
 PORT=3000 bun .next/standalone/server.js
 ```
 Open **[http://localhost:3000](http://localhost:3000)** in your browser.
+
+---
+
+## ☁️ Cloud Deployment (Docker / Railway / Render)
+
+SeeQL includes a production [`Dockerfile`](Dockerfile) configured with **Node 20 + Bun + Debian glibc** (supporting `bun:sqlite`, Prisma, and DuckDB native C++ bindings out of the box):
+
+1. Connect your GitHub fork/repo (`dhee7-DA/seeql`) to **Railway** or **Render** (Docker service).
+2. Set environment variables in the cloud dashboard:
+   - `GEMINI_API_KEY`: Your free key from Google AI Studio (optional, powers AI Mentor).
+   - `NEXT_PUBLIC_SITE_URL`: Your assigned domain (e.g., `https://seeql.up.railway.app`) for social preview cards.
+3. Configure healthcheck path as `/api/db-health`.
+4. Deploy! DuckDB filesystem access is automatically sandboxed (`enable_external_access = false`), dangerous SQLite directives are disabled, and `/api/mentor` includes IP rate limiting.
 
 ---
 
