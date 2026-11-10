@@ -9321,6 +9321,24 @@ Stage Summary:
 - Key files: Dockerfile, README.md, worklog.md.
 
 
+---
+Task ID: lc-round34
+Agent: Antigravity Pair Programmer
+Task: lc-round34 — Automated Free GHCR Container Pipeline & Docker Context Cleanup
+
+Work Log:
+- Docker Build Context Optimization (.dockerignore):
+  - Excluded non-app browser cache dumps (`scripts/office-shots`, `scripts/qm-shots`, `scripts/**/*.png`, `scripts/**/*.html`, `worklog.md`) while keeping `scripts/db-health.ts` and `scripts/gen-universe-counts.ts` available for prebuild.
+- Automated Free GHCR Container Action (.github/workflows/publish-image.yml):
+  - Added GitHub Actions workflow compiling `Dockerfile` cleanly on Ubuntu runners (7 GB RAM free for public repos) and publishing lowercase-tagged `ghcr.io/dhee7-da/seeql:latest` automatically on pushes to `main`.
+  - Enables forever-free zero-OOM deploys on both Hugging Face Spaces (`FROM ghcr.io/dhee7-da/seeql:latest`, bypassing 10 MB Git LFS limits on the 81 MB `db/custom.db` and providing 16 GB RAM free) and Render Free Tier.
+
+Stage Summary:
+- Forever-free CI/CD Docker image pipeline ready for push; zero credit card or 30-day trial constraints.
+- Key files: .dockerignore, .github/workflows/publish-image.yml, worklog.md.
+
+
+
 
 
 

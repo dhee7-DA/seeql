@@ -11,5 +11,10 @@ download
 tests
 skills
 scripts/mascot-research
+scripts/office-shots
+scripts/qm-shots
+scripts/**/*.png
+scripts/**/*.html
 tool-results
+worklog.md
 
